@@ -7,6 +7,12 @@
     <Filter Include="Source\Application">
       <UniqueIdentifier>{bfdddb63-b729-472a-afea-d34a3f771032}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Library">
+      <UniqueIdentifier>{5fafbcbc-7301-4293-8ae5-8b713ee1f000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\Utility">
+      <UniqueIdentifier>{1481acc7-9a04-4f9f-bcdd-3d4e25f7cf44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -14,6 +20,12 @@
     </ClInclude>
     <ClInclude Include="Source\PCH.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\Utility\json.hpp">
+      <Filter>Library\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Library\Utility\strconv2.h">
+      <Filter>Library\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
