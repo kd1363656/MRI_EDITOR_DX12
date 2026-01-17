@@ -154,6 +154,7 @@
     <ClInclude Include="Source\Framework\Utility\FileIO\FWKFileIOUtility.h" />
     <ClInclude Include="Source\Framework\Window\FWKWindow.h" />
     <ClInclude Include="Source\PCH.h" />
+    <ClInclude Include="Source\System\System.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp" />

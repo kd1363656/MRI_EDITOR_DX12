@@ -37,6 +37,12 @@
     <Filter Include="Source\Framework\FPS">
       <UniqueIdentifier>{47ce526a-37f8-467e-86c0-852aeec011d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\System">
+      <UniqueIdentifier>{aee3a1a9-d500-44aa-9fa4-92481587e2f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Graphics">
+      <UniqueIdentifier>{838ca69f-56ba-4eee-9f42-76dc8a62c381}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -71,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="Source\Framework\FPS\FWKFPSController.h">
       <Filter>Source\Framework\FPS</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\System.h">
+      <Filter>Source\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
