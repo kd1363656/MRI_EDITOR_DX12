@@ -7,6 +7,9 @@
 // シングルトンを安全に運用するための基底クラス
 #include "Singleton/FWKSingletonBase.h"
 
+// "FPS"計測クラス
+#include "FPS/FWKFPSController.h"
+
 // ウィンドウ
 #include "Window/FWKWindow.h"
 

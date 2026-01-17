@@ -23,7 +23,13 @@ bool FWK::Window::Create(const FWK::CommonStruct::Dimension2D& a_size, const std
 	l_wc.lpszMenuName  = nullptr;								// メニューリソースの名前
 	l_wc.lpszClassName = l_wndClassName.c_str();				// ウィンドウクラス名
 
-		// ウィンドウの作成
+	// ウィンドウクラスを"OS"に登録
+	if (!RegisterClassEx(&l_wc))
+	{
+		return false;
+	}
+
+	// ウィンドウの作成
 	m_hWND = CreateWindow(l_wndClassName.c_str()                   ,	 // 登録済みのウィンドウクラス名
 						  sjis_to_wide(a_titleName.data()).c_str() , // ウィンドウのタイトル(ワイド文字列に変換したもの)
 						  WS_OVERLAPPEDWINDOW - WS_THICKFRAME      , // 標準ウィンドウからサイズ変更用の太い枠を除いたスタイル
@@ -39,7 +45,7 @@ bool FWK::Window::Create(const FWK::CommonStruct::Dimension2D& a_size, const std
 	if (!m_hWND)
 	{
 		// メモリリーク防止
-		UnregisterClass(l_wndClassName.c_str(), l_hInst);
+		UnregisterClass(l_wndClassName.c_str() , l_hInst);
 		return false;
 	}
 
@@ -55,6 +61,32 @@ bool FWK::Window::Create(const FWK::CommonStruct::Dimension2D& a_size, const std
 	timeBeginPeriod(k_timerResolutionMS);
 
 	return true;
+}
+
+bool FWK::Window::ProcessMessage() const
+{
+	// メッセージ受け取り用構造体
+	MSG l_msg = {};
+
+	// メッセージキューからメッセージを取得
+	while (PeekMessage(&l_msg               ,  // メッセージを格納する構造体へのポインタ
+						nullptr             ,  // 対象のウィンドウハンドル("nullptr"なら全ウィンドウ)
+						k_messageFilterNone ,  // 最小メッセージ"ID"(フィルターの下限)
+						k_messageFilterNone ,  // 最大メッセージ"ID"(フィルターの上限)
+						PM_REMOVE))			   // 取得後にメッセージキューから削除するかどうか
+	{
+		// 終了メッセージが来たかどうか
+		if (l_msg.message == WM_QUIT)
+		{
+			return false;
+		}
+
+		// メッセージ処理
+		TranslateMessage(&l_msg);
+		DispatchMessage (&l_msg);
+	}
+
+	return false;
 }
 
 void FWK::Window::Release()

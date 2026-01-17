@@ -34,6 +34,9 @@
     <Filter Include="Source\Framework\Utility\FileIO">
       <UniqueIdentifier>{7805723d-92d0-40c7-b6df-f2323908eacc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Framework\FPS">
+      <UniqueIdentifier>{47ce526a-37f8-467e-86c0-852aeec011d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -66,6 +69,9 @@
     <ClInclude Include="..\Library\strconv2.h">
       <Filter>Library</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Framework\FPS\FWKFPSController.h">
+      <Filter>Source\Framework\FPS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp">
@@ -76,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="Source\Framework\Window\FWKWindow.cpp">
       <Filter>Source\Framework\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framework\FPS\FWKFPSController.cpp">
+      <Filter>Source\Framework\FPS</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

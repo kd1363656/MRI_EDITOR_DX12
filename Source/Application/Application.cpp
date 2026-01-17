@@ -36,12 +36,70 @@ void Application::Execute()
 		return;
 	}
 
+	// ゲームループ
+	m_fpsController.Init();
+
+	while (true)
+	{
+		// "FPS"の計測
+		m_fpsController.UpdateStartTime();
+
+		// ウィンドウメッセージの処理
+		m_window.ProcessMessage();
+
+		// ウィンドウが破棄されているか"Escape"キーが押されていたらゲームループ終了
+		if (!m_window.IsCreated() || GetAsyncKeyState(VK_ESCAPE))
+		{
+			EndGameLoop();
+		}
+
+		// もしゲームループ終了フラグが立っていたら"break"
+		if (m_isEndGameLoop) { break; }
+
+		// フレームレート制御
+		m_fpsController.Update();
+
+		// ウィンドウのタイトルバーを更新
+		UpdateWindowTitleBar();
+	}
+
+	// ウィンドウの解像度を保存(ウィンドウサイズの設定は保存しておくべきだから)
+	SaveWindowSize();
+
+	// アプリケーション開放
+	Release();
+}
+
+void Application::EndGameLoop()
+{
+	m_isEndGameLoop = true;
 }
 
 bool Application::Init(const FWK::CommonStruct::Dimension2D& a_size)
 {
+	// タイトル名 + "FPS"の表示
+	const std::string& l_titleBar = GenerateWindowTitleText();
+	SetWindowTextA									       (GetHWND() , l_titleBar.c_str());
 
-	return false;
+	if (!m_window.Create(a_size , l_titleBar , k_windowClassName)) 
+	{
+		MessageBoxA(nullptr                           , 
+					k_windowCreateFailMessage.c_str() ,
+					k_windowCreateFailCaption.c_str() ,
+					MB_OK);
+
+		return false;
+	}
+
+	m_isEndGameLoop = false;
+
+	return true;
+}
+
+void Application::Release()
+{
+	// ウィンドウ削除
+	m_window.Release();
 }
 
 void Application::LoadWindowSize()
@@ -60,4 +118,17 @@ void Application::SaveWindowSize()
 	l_rootJson["Width"]  = m_windowSize.width;
 
 	FWK::FileIOUtility::SaveJsonFile(l_rootJson , k_windowSizeFileIOPath);
+}
+
+void Application::UpdateWindowTitleBar() const
+{
+	// タイトル名 + "FPS"の表示
+	// 一時オブジェクトは"const"参照で有効期限を延ばせる
+	const std::string& l_titleBar = GenerateWindowTitleText();
+	SetWindowTextA                                         (GetHWND() , l_titleBar.c_str());
+}
+
+std::string Application::GenerateWindowTitleText() const
+{
+	return std::format("{} : {}" , k_titleName , GetNowFPS());
 }

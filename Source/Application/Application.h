@@ -4,20 +4,42 @@ class Application final : public FWK::SingletonBase<Application>
 {
 public:
 
-	void Execute();
+	void Execute    ();
+	void EndGameLoop();
+
+	HWND GetHWND() const { return m_window.GetHWND(); }
+
+	int GetNowFPS() const { return m_fpsController.GetNowFPS(); }
+
+	float GetScaledDeltaTime() const { return m_fpsController.GetScaledDeltaTime(); }
 
 private:
 
-	bool Init(const FWK::CommonStruct::Dimension2D& a_size);
+	bool Init   (const FWK::CommonStruct::Dimension2D& a_size);
+	void Release();
 
 	void LoadWindowSize();
 	void SaveWindowSize();
 
-	const std::string k_windowSizeFileIOPath = "Asset/Data/Setting/Window/WindowConfig.json";
+	void UpdateWindowTitleBar() const;
+
+	std::string GenerateWindowTitleText() const;
+
+	static constexpr std::string_view k_titleName = "MRI_FRAMEWORK_DX12";
+	
+	const std::string k_windowSizeFileIOPath    = "Asset/Data/Setting/Window/WindowConfig.json";
+	const std::string k_windowClassName         = "Window";
+	const std::string k_windowCreateFailMessage = "ウィンドウの作成に失敗";
+	const std::string k_windowCreateFailCaption = "エラー";
+
+
+	FWK::FPSController m_fpsController = {};
 
 	FWK::Window m_window = {};
 
 	FWK::CommonStruct::Dimension2D m_windowSize = FWK::CommonConstant::k_defaultWindowSize;
+
+	bool m_isEndGameLoop = false;
 
 	//===============================
 	// シングルトン
