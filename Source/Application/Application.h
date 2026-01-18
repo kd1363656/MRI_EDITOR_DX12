@@ -27,12 +27,13 @@ private:
 
 	static constexpr std::string_view k_titleName = "MRI_FRAMEWORK_DX12";
 	
+	static constexpr const char* const k_failCaption			 = "エラー";
+	static constexpr const char* const k_windowCreateFailMessage = "ウィンドウの作成に失敗";
+	static constexpr const char* const k_dx12InitFailMessage     = "\"DX12\"の初期化に失敗";
+	
 	const std::string k_windowSizeFileIOPath    = "Asset/Data/Setting/Window/WindowConfig.json";
 	const std::string k_windowClassName         = "Window";
-	const std::string k_windowCreateFailMessage = "ウィンドウの作成に失敗";
-	const std::string k_windowCreateFailCaption = "エラー";
-
-
+	
 	FWK::FPSController m_fpsController = {};
 
 	FWK::Window m_window = {};

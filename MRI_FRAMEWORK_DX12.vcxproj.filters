@@ -81,6 +81,9 @@
     <ClInclude Include="Source\System\System.h">
       <Filter>Source\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Framework\Graphics\FWKGraphicsManager.h">
+      <Filter>Source\Framework\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp">
@@ -94,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="Source\Framework\FPS\FWKFPSController.cpp">
       <Filter>Source\Framework\FPS</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framework\Graphics\FWKGraphicsManager.cpp">
+      <Filter>Source\Framework\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

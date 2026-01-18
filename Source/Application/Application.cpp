@@ -81,11 +81,23 @@ bool Application::Init(const FWK::CommonStruct::Dimension2D& a_size)
 	const std::string& l_titleBar = GenerateWindowTitleText();
 	SetWindowTextA									       (GetHWND() , l_titleBar.c_str());
 
+	// ウィンドウ作成
 	if (!m_window.Create(a_size , l_titleBar , k_windowClassName)) 
 	{
-		MessageBoxA(nullptr                           , 
-					k_windowCreateFailMessage.c_str() ,
-					k_windowCreateFailCaption.c_str() ,
+		MessageBoxA(nullptr                   , 
+					k_windowCreateFailMessage ,
+					k_failCaption			  ,
+					MB_OK);
+
+		return false;
+	}
+
+	// "DirectX12"初期化
+	if (!FWK::Graphics::GraphicsManager::GetInstance().Init())
+	{
+		MessageBoxA(nullptr               , 
+					k_dx12InitFailMessage ,
+					k_failCaption		  ,
 					MB_OK);
 
 		return false;

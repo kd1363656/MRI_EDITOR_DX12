@@ -15,3 +15,6 @@
 
 // ファイル入出力便利関数
 #include "Utility/FileIO/FWKFileIOUtility.h"
+
+// "Graphic"クラス
+#include "Graphics/FWKGraphicsManager.h"
