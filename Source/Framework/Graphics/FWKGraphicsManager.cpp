@@ -193,6 +193,18 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const F
 													  nullptr              ,	// 第四引数 : フルスクリーン時の設定
 													  nullptr			   ,	// 第五引数 : モニター指定("nullptr"で自動選択)
 													  &l_swapChainCache);		// 結果格納変数	
+	if (FAILED(l_hr))
+	{
+		assert(false && "スワップチェーンの作製に失敗しました。");
+		return false;
+	}
+
+	if (!l_swapChainCache)
+	{
+		assert(false && "スワップチェーンの作製に失敗しました。");
+		return false;
+	}
+
 	// "IDXGISwapChain4"にキャストして保持
 	l_hr = l_swapChainCache.As(&m_swapChain);
 	if (FAILED(l_hr))
