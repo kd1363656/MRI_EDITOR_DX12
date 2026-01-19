@@ -6,13 +6,14 @@ namespace FWK::Graphics
 	{
 	public:
 
-		bool Init();
+		bool Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 	
 	private:
 
 		bool CreateFactory       ();
 		bool CreateDevice        ();
 		bool CreateCommandObjects();
+		bool CreateSwapChain     (const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 
 #if defined (_DEBUG)
 		void EnableDebugLayer() const;
@@ -24,7 +25,9 @@ namespace FWK::Graphics
 		static constexpr const wchar_t* const k_lineBreak			 = L"\n";
 #endif
 
-		static constexpr UINT k_singleGPUNodeMask = 0U;	// 単一"GPU"を使用するノードマスク。マルチアダプター非対応。
+		static constexpr UINT k_singleGPUNodeMask    = 0U;	// 単一"GPU"を使用するノードマスク。マルチアダプター非対応。
+		static constexpr UINT k_defaultBackBufferNum = 2U;	
+		static constexpr UINT k_sampleCount          = 1U;
 
 		ComPtr<ID3D12Device10>  m_device      = nullptr;	// "DirectX12"においてオブジェクトの生成などに使用
 		ComPtr<IDXGIFactory7>   m_dxgiFactory = nullptr;	// 使用するグラフィックカードの設定やスワップチェーンの作製に使用

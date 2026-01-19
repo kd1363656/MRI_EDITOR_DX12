@@ -77,9 +77,11 @@ void Application::EndGameLoop()
 
 bool Application::Init(const FWK::CommonStruct::Dimension2D& a_size)
 {
+	const HWND& l_hWND = GetHWND();
+
 	// タイトル名 + "FPS"の表示
 	const std::string& l_titleBar = GenerateWindowTitleText();
-	SetWindowTextA									       (GetHWND() , l_titleBar.c_str());
+	SetWindowTextA									       (l_hWND , l_titleBar.c_str());
 
 	// ウィンドウ作成
 	if (!m_window.Create(a_size , l_titleBar , k_windowClassName)) 
@@ -93,7 +95,7 @@ bool Application::Init(const FWK::CommonStruct::Dimension2D& a_size)
 	}
 
 	// "DirectX12"初期化
-	if (!FWK::Graphics::GraphicsManager::GetInstance().Init())
+	if (!FWK::Graphics::GraphicsManager::GetInstance().Init(l_hWND , a_size))
 	{
 		MessageBoxA(nullptr               , 
 					k_dx12InitFailMessage ,

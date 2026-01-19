@@ -1,6 +1,6 @@
 #include "FWKGraphicsManager.h"
 
-bool FWK::Graphics::GraphicsManager::Init()
+bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size)
 {
 	// スワップチェーンやデバイス作成に使うファクトリーを作成
 	if (!CreateFactory())
@@ -16,9 +16,17 @@ bool FWK::Graphics::GraphicsManager::Init()
 		return false;
 	}
 
+	// コマンドリスト、コマンドアロケーター、コマンドキューの作成
 	if (!CreateCommandObjects())
 	{
 		assert(false && "コマンド関連オブジェクトの作成に失敗しました。");
+		return false;
+	}
+
+	// スワップチェーン作製
+	if (!CreateSwapChain(a_hWND , a_size))
+	{
+		assert(false && "スワップチェーン作成に失敗しました。");
 		return false;
 	}
 
@@ -128,10 +136,10 @@ bool FWK::Graphics::GraphicsManager::CreateCommandObjects()
 
 	// コマンドキュー作成
 	D3D12_COMMAND_QUEUE_DESC l_queueDesc = {};
-	l_queueDesc.Type     = D3D12_COMMAND_LIST_TYPE_DIRECT;		// どの種類のコマンドを渡すキューか
-	l_queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL; // キューの優先度を指定
-	l_queueDesc.Flags    = D3D12_COMMAND_QUEUE_FLAG_NONE;		// コマンドキューに対するオプション(現在格納しているフラグは"GPU"のタイムアウトを無効化)
-	l_queueDesc.NodeMask = k_singleGPUNodeMask;					// マルチアダプターを指定
+	l_queueDesc.Type					 = D3D12_COMMAND_LIST_TYPE_DIRECT;		// どの種類のコマンドを渡すキューか
+	l_queueDesc.Priority				 = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL; // キューの優先度を指定
+	l_queueDesc.Flags					 = D3D12_COMMAND_QUEUE_FLAG_NONE;		// コマンドキューに対するオプション(現在格納しているフラグは"GPU"のタイムアウトを無効化)
+	l_queueDesc.NodeMask				 = k_singleGPUNodeMask;					// マルチアダプターを指定
 	
 	// 第一引数 : 作製するキューのパラメータ、第二引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
 	l_hr = m_device->CreateCommandQueue(&l_queueDesc , IID_PPV_ARGS(&m_commandQueue));
@@ -142,10 +150,10 @@ bool FWK::Graphics::GraphicsManager::CreateCommandObjects()
 	}
 
 	// コマンドリスト作成
-	l_hr = m_device->CreateCommandList1(0U							        ,	// 複数の"GPU"を使うかどうか
-										D3D12_COMMAND_LIST_TYPE_DIRECT      ,	// 作製するコマンドリストの種類
-										D3D12_COMMAND_LIST_FLAG_NONE        ,	// 作製フラグ
-									    IID_PPV_ARGS(&m_graphicsCommandList));	// 取得するインターフェースの"ID"と、結果を受け取るポインタ
+	l_hr = m_device->CreateCommandList1(0U							        ,	// 第一引数 : 複数の"GPU"を使うかどうか
+										D3D12_COMMAND_LIST_TYPE_DIRECT      ,	// 第二引数 : 作製するコマンドリストの種類
+										D3D12_COMMAND_LIST_FLAG_NONE        ,	// 第三引数 : 作製フラグ
+									    IID_PPV_ARGS(&m_graphicsCommandList));	// 第四引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
 
 	if (FAILED(l_hr))
 	{
@@ -155,6 +163,44 @@ bool FWK::Graphics::GraphicsManager::CreateCommandObjects()
 
 	// 作製直後のコマンドリストを明示的に"Close"
 	m_graphicsCommandList->Close();
+	return true;
+}
+bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size)
+{
+	if (!m_dxgiFactory || !m_commandQueue)
+	{
+		assert(false && "\"DXGI\"ファクトリーまたはコマンドキューが初期化されていません。");
+		return false;
+	}
+
+	DXGI_SWAP_CHAIN_DESC1 l_swapChainDesc = {};
+	l_swapChainDesc.BufferCount			  = k_defaultBackBufferNum;
+	l_swapChainDesc.Width				  = a_size.width;
+	l_swapChainDesc.Height				  = a_size.height;
+	l_swapChainDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
+	l_swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	l_swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	l_swapChainDesc.SampleDesc.Count      = k_sampleCount;
+	l_swapChainDesc.AlphaMode			  = DXGI_ALPHA_MODE_UNSPECIFIED;
+	l_swapChainDesc.Scaling               = DXGI_SCALING_STRETCH;
+	l_swapChainDesc.Stereo				  = FALSE;
+
+	ComPtr<IDXGISwapChain1> l_swapChainCache = nullptr;
+
+	auto l_hr = m_dxgiFactory->CreateSwapChainForHwnd(m_commandQueue.Get() ,	// 第一引数 : コマンドキューのポインタ
+													  a_hWND				   ,	// 第二引数 : ウィンドウハンドル
+													  &l_swapChainDesc     ,	// 第三引数 : スワップチェーンのパラメーター
+													  nullptr              ,	// 第四引数 : フルスクリーン時の設定
+													  nullptr			   ,	// 第五引数 : モニター指定("nullptr"で自動選択)
+													  &l_swapChainCache);		// 結果格納変数	
+	// "IDXGISwapChain4"にキャストして保持
+	l_hr = l_swapChainCache.As(&m_swapChain);
+	if (FAILED(l_hr))
+	{
+		assert(false && "スワップチェーンの型変換に失敗しました。");
+		return false;
+	}
+
 	return true;
 }
 
