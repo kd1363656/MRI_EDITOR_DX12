@@ -12,12 +12,13 @@ namespace FWK::Graphics
 
 	private:
 
-		bool CreateFactory       ();
-		bool CreateDevice        ();
-		bool CreateCommandObjects();
-		bool CreateSwapChain     (const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
-		bool CreateSwapChainRTV  ();
-		bool CreateFence         ();
+		bool CreateFactory           ();
+		bool CreateDevice            ();
+		bool CreateCommandObjects    ();
+		bool CreateSwapChain         (const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
+		bool CreateRTVDescriptorHeap();
+		bool CreateSwapChainRTV     ();
+		bool CreateFence            ();
 
 #if defined (_DEBUG)
 		void EnableDebugLayer() const;
@@ -46,7 +47,8 @@ namespace FWK::Graphics
 
 		std::unique_ptr<FWK::Graphics::RTVDescriptorHeap> m_rtvDescriptorHeap = nullptr;
 
-		UINT64 m_fenceVal = 0ULL;
+		UINT64 m_fenceVal   = 0ULL;
+		HANDLE m_fenceEvent = nullptr;
 
 		//===============================
 		// ƒVƒ“ƒOƒ‹ƒgƒ“

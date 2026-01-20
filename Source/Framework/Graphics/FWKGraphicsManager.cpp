@@ -30,6 +30,13 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 		return false;
 	}
 
+	// "RTVDescriptorHeap"の作成
+	if (!CreateRTVDescriptorHeap())
+	{
+		assert(false && "\"RTVDescriptorHeap\"作成に失敗しました。");
+		return false;
+	}
+
 	// スワップチェイン用"RTV"の作成
 	if (!CreateSwapChainRTV())
 	{
@@ -227,8 +234,7 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const F
 
 	return true;
 }
-
-bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
+bool FWK::Graphics::GraphicsManager::CreateRTVDescriptorHeap()
 {
 	if (!m_swapChain || !m_device)
 	{
@@ -251,6 +257,20 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
 		assert (false && "\"RTV\"ディスクリプタヒープの初期化に失敗しました。");
 		return false;
 	}
+
+
+	return false;
+}
+bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
+{
+	if (!m_swapChain || !m_rtvDescriptorHeap)
+	{
+		assert(false && "スワップチェーンまたは\"RTVHeap\"が初期化されていません。");
+		return false;
+	}
+
+	// バックバッファ数を取得
+	const UINT l_bufferCount = FWK::CommonConstant::k_defaultBackBufferNum;
 
 	// スワップチェーンの各バッファーに対して"RTV"を生成
 	for (UINT l_i = 0U; l_i < l_bufferCount; ++l_i)
@@ -283,6 +303,13 @@ bool FWK::Graphics::GraphicsManager::CreateFence()
 	if (FAILED(m_device->CreateFence(m_fenceVal , D3D12_FENCE_FLAG_NONE , IID_PPV_ARGS(&m_fence))))
 	{
 		assert(false && "フェンスの作成に失敗");
+		return false;
+	}
+
+	m_fenceEvent = CreateEvent(nullptr  ,  FALSE , FALSE , nullptr);
+	if (!m_fenceEvent)
+	{
+		assert(false && "フェンスイベントの作成に失敗");
 		return false;
 	}
 
