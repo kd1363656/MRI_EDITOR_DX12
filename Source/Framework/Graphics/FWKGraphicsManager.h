@@ -8,12 +8,15 @@ namespace FWK::Graphics
 
 		bool Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 	
+		const ComPtr<ID3D12Device10>& GetDevice() const { return m_device; }
+
 	private:
 
 		bool CreateFactory       ();
 		bool CreateDevice        ();
 		bool CreateCommandObjects();
 		bool CreateSwapChain     (const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
+		bool CreateSwapChainRTV  ();
 
 #if defined (_DEBUG)
 		void EnableDebugLayer() const;
@@ -21,13 +24,14 @@ namespace FWK::Graphics
 
 #if defined (_DEBUG)
 		static constexpr const wchar_t* const k_debugSelectedGPUText = L"選択候補 GPU";
-		static constexpr const wchar_t* const k_debugSucceeded		 = L" -> デバイス作成に成功\n";
-		static constexpr const wchar_t* const k_lineBreak			 = L"\n";
+		static constexpr const wchar_t* const k_debugSucceededText	 = L" -> デバイス作成に成功\n";
+		static constexpr const wchar_t* const k_overBackBufferText	 = L"\n";
+		static constexpr const wchar_t* const k_lineBreakSTR		 = L"バックバッファーの容量を超えました。";
 #endif
 
-		static constexpr UINT k_singleGPUNodeMask    = 0U;	// 単一"GPU"を使用するノードマスク。マルチアダプター非対応。
-		static constexpr UINT k_defaultBackBufferNum = 2U;	
-		static constexpr UINT k_sampleCount          = 1U;
+		static constexpr UINT k_sampleCount = 1U;
+
+		std::array<ComPtr<ID3D12Resource2> , FWK::CommonConstant::k_defaultBackBufferNum> m_swapChainBuffers;
 
 		ComPtr<ID3D12Device10>  m_device      = nullptr;	// "DirectX12"においてオブジェクトの生成などに使用
 		ComPtr<IDXGIFactory7>   m_dxgiFactory = nullptr;	// 使用するグラフィックカードの設定やスワップチェーンの作製に使用
@@ -36,6 +40,8 @@ namespace FWK::Graphics
 		ComPtr<ID3D12GraphicsCommandList7> m_graphicsCommandList = nullptr;
 		ComPtr<ID3D12CommandQueue>         m_commandQueue        = nullptr;
 		ComPtr<ID3D12CommandAllocator>     m_commandAllocator    = nullptr;
+
+		std::unique_ptr<FWK::Graphics::RTVDescriptorHeap> m_rtvDescriptorHeap = nullptr;
 
 		//===============================
 		// シングルトン

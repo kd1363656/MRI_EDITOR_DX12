@@ -2,11 +2,6 @@
 
 bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size)
 {
-	if (!a_hWND)
-	{
-		std::string();
-	}
-
 	// スワップチェーンやデバイス作成に使うファクトリーを作成
 	if (!CreateFactory())
 	{
@@ -32,6 +27,13 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 	if (!CreateSwapChain(a_hWND , a_size))
 	{
 		assert(false && "スワップチェーン作成に失敗しました。");
+		return false;
+	}
+
+	// スワップチェイン用"RTV"の作成
+	if (!CreateSwapChainRTV())
+	{
+		assert(false && "スワップチェーン用\"RTV\"作成に失敗しました。");
 		return false;
 	}
 
@@ -97,7 +99,7 @@ bool FWK::Graphics::GraphicsManager::CreateDevice()
 		// アダプター名をデバックログに出力
 		OutputDebugStringW(k_debugSelectedGPUText);
 		OutputDebugStringW(l_desc.Description);
-		OutputDebugStringW(k_lineBreak);
+		OutputDebugStringW(k_lineBreakSTR);
 #endif
 
 		// 一致するフィーチャーレベルを最高レベルからレベルを下げていって探索
@@ -108,7 +110,7 @@ bool FWK::Graphics::GraphicsManager::CreateDevice()
 			
 #if defined (_DEBUG)
 		// アダプター名をデバックログに出力
-			OutputDebugStringW(k_debugSucceeded);
+			OutputDebugStringW(k_debugSucceededText);
 #endif
 			l_deviceCreated = true;
 			break;
@@ -141,10 +143,10 @@ bool FWK::Graphics::GraphicsManager::CreateCommandObjects()
 
 	// コマンドキュー作成
 	D3D12_COMMAND_QUEUE_DESC l_queueDesc = {};
-	l_queueDesc.Type					 = D3D12_COMMAND_LIST_TYPE_DIRECT;		// どの種類のコマンドを渡すキューか
-	l_queueDesc.Priority				 = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL; // キューの優先度を指定
-	l_queueDesc.Flags					 = D3D12_COMMAND_QUEUE_FLAG_NONE;		// コマンドキューに対するオプション(現在格納しているフラグは"GPU"のタイムアウトを無効化)
-	l_queueDesc.NodeMask				 = k_singleGPUNodeMask;					// マルチアダプターを指定
+	l_queueDesc.Type					 = D3D12_COMMAND_LIST_TYPE_DIRECT;		     // どの種類のコマンドを渡すキューか
+	l_queueDesc.Priority				 = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;      // キューの優先度を指定
+	l_queueDesc.Flags					 = D3D12_COMMAND_QUEUE_FLAG_NONE;		     // コマンドキューに対するオプション(現在格納しているフラグは"GPU"のタイムアウトを無効化)
+	l_queueDesc.NodeMask				 = FWK::CommonConstant::k_singleGPUNodeMask;	 // マルチアダプターを指定
 	
 	// 第一引数 : 作製するキューのパラメータ、第二引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
 	l_hr = m_device->CreateCommandQueue(&l_queueDesc , IID_PPV_ARGS(&m_commandQueue));
@@ -166,8 +168,6 @@ bool FWK::Graphics::GraphicsManager::CreateCommandObjects()
 		return false;
 	}
 
-	// 作製直後のコマンドリストを明示的に"Close"
-	m_graphicsCommandList->Close();
 	return true;
 }
 bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size)
@@ -179,7 +179,7 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const F
 	}
 
 	DXGI_SWAP_CHAIN_DESC1 l_swapChainDesc = {};
-	l_swapChainDesc.BufferCount			  = k_defaultBackBufferNum;
+	l_swapChainDesc.BufferCount			  = FWK::CommonConstant::k_defaultBackBufferNum;
 	l_swapChainDesc.Width				  = a_size.width;
 	l_swapChainDesc.Height				  = a_size.height;
 	l_swapChainDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -216,6 +216,55 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const F
 	{
 		assert(false && "スワップチェーンの型変換に失敗しました。");
 		return false;
+	}
+
+	return true;
+}
+
+bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
+{
+	if (!m_swapChain || !m_device)
+	{
+		assert(false && "スワップチェーンまたはデバイスが初期化されていません。");
+		return false;
+	}
+
+	// バックバッファ数を取得
+	const UINT l_bufferCount = FWK::CommonConstant::k_defaultBackBufferNum;
+
+	// "RTV"ディスクリプタヒープを初期化
+	if (!m_rtvDescriptorHeap)
+	{
+		m_rtvDescriptorHeap = std::make_unique<FWK::Graphics::RTVDescriptorHeap>();
+	}
+
+	// バックバッファの数を格納つまり"RTV"の数は二つ
+	if (!m_rtvDescriptorHeap->Init(l_bufferCount))
+	{
+		assert (false && "\"RTV\"ディスクリプタヒープの初期化に失敗しました。");
+		return false;
+	}
+
+	// スワップチェーンの各バッファーに対して"RTV"を生成
+	for (UINT l_i = 0U; l_i < l_bufferCount; ++l_i)
+	{
+		// "for"文がバッファーの数を超えていたら"break"
+		if (l_i >= m_swapChainBuffers.size()) 
+		{
+#if defined (_DEBUG)
+			OutputDebugStringW(k_overBackBufferText);
+#endif
+			break; 
+		}
+
+		if (FAILED(m_swapChain->GetBuffer(l_i , IID_PPV_ARGS(&m_swapChainBuffers[l_i]))))
+		{
+			assert(false && "バックバッファの取得に失敗しました。");
+			return false;
+		}
+
+		// "RTV"作製(内部的にインデックス管理を行ってくれる)
+		m_rtvDescriptorHeap->CreateRTV(m_swapChainBuffers[l_i]);
 	}
 
 	return true;

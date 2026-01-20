@@ -150,6 +150,7 @@
     <ClInclude Include="Source\Framework\Definition\Struct\FWKCommonStruct.h" />
     <ClInclude Include="Source\Framework\FPS\FWKFPSController.h" />
     <ClInclude Include="Source\Framework\Framework.h" />
+    <ClInclude Include="Source\Framework\Graphics\Descriptor\Heap\RTV\FWKRTVDescriptorHeap.h" />
     <ClInclude Include="Source\Framework\Graphics\FWKGraphicsManager.h" />
     <ClInclude Include="Source\Framework\Singleton\FWKSingletonBase.h" />
     <ClInclude Include="Source\Framework\Utility\FileIO\FWKFileIOUtility.h" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp" />
     <ClCompile Include="Source\Framework\FPS\FWKFPSController.cpp" />
+    <ClCompile Include="Source\Framework\Graphics\Descriptor\Heap\RTV\FWKRTVDescriptorHeap.cpp" />
     <ClCompile Include="Source\Framework\Graphics\FWKGraphicsManager.cpp" />
     <ClCompile Include="Source\Framework\Window\FWKWindow.cpp" />
     <ClCompile Include="Source\PCH.cpp">

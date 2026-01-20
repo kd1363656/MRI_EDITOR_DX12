@@ -43,6 +43,15 @@
     <Filter Include="Source\Framework\Graphics">
       <UniqueIdentifier>{838ca69f-56ba-4eee-9f42-76dc8a62c381}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Framework\Graphics\Descriptor">
+      <UniqueIdentifier>{cf804018-2b21-44a8-8fdc-77b72ff1f964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Graphics\Descriptor\Heap">
+      <UniqueIdentifier>{d14491cd-c529-4778-9d45-9a1b905bc376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Framework\Graphics\Descriptor\Heap\RTV">
+      <UniqueIdentifier>{47940cf2-be48-49dd-9b8a-5bb109433219}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -84,6 +93,9 @@
     <ClInclude Include="Source\Framework\Graphics\FWKGraphicsManager.h">
       <Filter>Source\Framework\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Framework\Graphics\Descriptor\Heap\RTV\FWKRTVDescriptorHeap.h">
+      <Filter>Source\Framework\Graphics\Descriptor\Heap\RTV</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp">
@@ -100,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="Source\Framework\Graphics\FWKGraphicsManager.cpp">
       <Filter>Source\Framework\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framework\Graphics\Descriptor\Heap\RTV\FWKRTVDescriptorHeap.cpp">
+      <Filter>Source\Framework\Graphics\Descriptor\Heap\RTV</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
