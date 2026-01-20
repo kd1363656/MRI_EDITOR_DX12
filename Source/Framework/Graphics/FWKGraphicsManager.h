@@ -20,6 +20,8 @@ namespace FWK::Graphics
 		bool CreateSwapChainRTV     ();
 		bool CreateFence            ();
 
+		void BeginDraw();
+
 #if defined (_DEBUG)
 		void EnableDebugLayer() const;
 #endif
@@ -31,8 +33,11 @@ namespace FWK::Graphics
 		static constexpr const wchar_t* const k_lineBreakSTR		 = L"バックバッファーの容量を超えました。";
 #endif
 
-		static constexpr UINT k_sampleCount = 1U;
-		
+		void SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after);
+
+		static constexpr UINT k_sampleCount   = 1U;
+		static constexpr UINT k_setBarrierNum = 1U;
+
 		std::array<ComPtr<ID3D12Resource2> , FWK::CommonConstant::k_defaultBackBufferNum> m_swapChainBuffers;
 
 		ComPtr<ID3D12Device10>  m_device      = nullptr;	// "DirectX12"においてオブジェクトの生成などに使用

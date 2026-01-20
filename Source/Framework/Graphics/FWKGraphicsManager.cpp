@@ -316,6 +316,30 @@ bool FWK::Graphics::GraphicsManager::CreateFence()
 	return true;
 }
 
+void FWK::Graphics::GraphicsManager::BeginDraw()
+{
+	if (!m_swapChain || !m_commandAllocator)
+	{
+		return;
+	}
+
+	// 描画命令のクリア
+	m_commandAllocator->Reset   ();
+	m_graphicsCommandList->Reset(m_commandAllocator.Get() , nullptr);
+
+	const UINT l_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex   ();
+	auto	   l_resource        = m_swapChainBuffers[l_backBufferIndex].Get();
+
+	if (!l_resource)
+	{
+		assert(false && "スワップチェーン用のバッファーが作製されていません");
+		return;
+	}
+
+	SetResourceBarrier(l_resource , D3D12_RESOURCE_STATE_PRESENT , D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+}
+
 #if defined (_DEBUG)
 void FWK::Graphics::GraphicsManager::EnableDebugLayer() const
 {
@@ -325,3 +349,28 @@ void FWK::Graphics::GraphicsManager::EnableDebugLayer() const
 	l_debugController->EnableDebugLayer();
 }
 #endif
+
+void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after)
+{
+	if (!a_resource)
+	{
+		assert(false && "スワップチェーン用のバッファーが作製されていません");
+		return;
+	}
+
+	if (!m_graphicsCommandList)
+	{
+		assert(false && "コマンドリストが作製されていません");
+		return;
+	}
+	
+	D3D12_RESOURCE_BARRIER l_barrier = {};
+	l_barrier.Type					 = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	l_barrier.Flags                  = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	l_barrier.Transition.pResource   = a_resource.Get();
+	l_barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	l_barrier.Transition.StateBefore = a_befor;
+	l_barrier.Transition.StateAfter  = a_after;
+
+	m_graphicsCommandList->ResourceBarrier(k_setBarrierNum , &l_barrier);
+}
