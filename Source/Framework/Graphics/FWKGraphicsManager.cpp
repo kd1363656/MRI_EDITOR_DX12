@@ -37,6 +37,13 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 		return false;
 	}
 
+	// フェンスの作成
+	if (!CreateFence())
+	{
+		assert(false && "フェンスの作成に失敗しました。");
+		return false;
+	}
+
 	return true;
 }
 
@@ -257,6 +264,7 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
 			break; 
 		}
 
+		// スワップチェーンのバックバッファーとビューを結びつける
 		if (FAILED(m_swapChain->GetBuffer(l_i , IID_PPV_ARGS(&m_swapChainBuffers[l_i]))))
 		{
 			assert(false && "バックバッファの取得に失敗しました。");
@@ -265,6 +273,17 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
 
 		// "RTV"作製(内部的にインデックス管理を行ってくれる)
 		m_rtvDescriptorHeap->CreateRTV(m_swapChainBuffers[l_i]);
+	}
+
+	return true;
+}
+
+bool FWK::Graphics::GraphicsManager::CreateFence()
+{
+	if (FAILED(m_device->CreateFence(m_fenceVal , D3D12_FENCE_FLAG_NONE , IID_PPV_ARGS(&m_fence))))
+	{
+		assert(false && "フェンスの作成に失敗");
+		return false;
 	}
 
 	return true;

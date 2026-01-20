@@ -17,6 +17,7 @@ namespace FWK::Graphics
 		bool CreateCommandObjects();
 		bool CreateSwapChain     (const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 		bool CreateSwapChainRTV  ();
+		bool CreateFence         ();
 
 #if defined (_DEBUG)
 		void EnableDebugLayer() const;
@@ -30,7 +31,7 @@ namespace FWK::Graphics
 #endif
 
 		static constexpr UINT k_sampleCount = 1U;
-
+		
 		std::array<ComPtr<ID3D12Resource2> , FWK::CommonConstant::k_defaultBackBufferNum> m_swapChainBuffers;
 
 		ComPtr<ID3D12Device10>  m_device      = nullptr;	// "DirectX12"においてオブジェクトの生成などに使用
@@ -41,7 +42,11 @@ namespace FWK::Graphics
 		ComPtr<ID3D12CommandQueue>         m_commandQueue        = nullptr;
 		ComPtr<ID3D12CommandAllocator>     m_commandAllocator    = nullptr;
 
+		ComPtr<ID3D12Fence1> m_fence = nullptr;	// "CPU"と"GPU"間の同期をとるのに必要
+
 		std::unique_ptr<FWK::Graphics::RTVDescriptorHeap> m_rtvDescriptorHeap = nullptr;
+
+		UINT64 m_fenceVal = 0ULL;
 
 		//===============================
 		// シングルトン
