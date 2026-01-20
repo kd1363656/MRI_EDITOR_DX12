@@ -59,6 +59,9 @@ void Application::Execute()
 		// フレームレート制御
 		m_fpsController.Update();
 
+		// 描画更新
+		FWK::Graphics::GraphicsManager::GetInstance().BeginDraw();
+
 		// ウィンドウのタイトルバーを更新
 		UpdateWindowTitleBar();
 	}

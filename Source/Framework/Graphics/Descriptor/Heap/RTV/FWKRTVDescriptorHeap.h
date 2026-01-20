@@ -13,6 +13,8 @@ namespace FWK::Graphics
 
 		UINT CreateRTV(const ComPtr<ID3D12Resource2>& a_resource);
 
+		D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUHandle(UINT a_index) const;
+
 	private:
 
 		ComPtr<ID3D12DescriptorHeap> m_descriptorHeap = nullptr;

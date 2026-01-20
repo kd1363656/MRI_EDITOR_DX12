@@ -58,3 +58,17 @@ UINT FWK::Graphics::RTVDescriptorHeap::CreateRTV(const ComPtr<ID3D12Resource2>& 
 
 	return m_currentIndex++;	// 使用済みのインデックスを返す
 }
+
+D3D12_CPU_DESCRIPTOR_HANDLE FWK::Graphics::RTVDescriptorHeap::GetRTVCPUHandle(UINT a_index) const
+{
+	if (!m_descriptorHeap || a_index >= m_maxIndex)
+	{
+		assert(false && "でスクリプタヒープの作製かヒープ領域を超えています。");
+		return D3D12_CPU_DESCRIPTOR_HANDLE();
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE l_handle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	l_handle.ptr += static_cast<SIZE_T>(a_index) * m_descriptorSize;
+
+	return l_handle;
+}

@@ -8,6 +8,8 @@ namespace FWK::Graphics
 
 		bool Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 	
+		void BeginDraw();
+
 		const ComPtr<ID3D12Device10>& GetDevice() const { return m_device; }
 
 	private:
@@ -19,8 +21,6 @@ namespace FWK::Graphics
 		bool CreateRTVDescriptorHeap();
 		bool CreateSwapChainRTV     ();
 		bool CreateFence            ();
-
-		void BeginDraw();
 
 #if defined (_DEBUG)
 		void EnableDebugLayer() const;
