@@ -9,6 +9,7 @@ namespace FWK::Graphics
 		bool Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 	
 		void BeginDraw();
+		void EndDraw  ();
 
 		const ComPtr<ID3D12Device10>& GetDevice() const { return m_device; }
 

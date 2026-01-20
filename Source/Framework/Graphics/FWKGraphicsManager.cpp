@@ -61,42 +61,13 @@ void FWK::Graphics::GraphicsManager::BeginDraw()
 		return;
 	}
 
-	m_commandAllocator->Reset();
+	m_commandAllocator->Reset   ();
 	m_graphicsCommandList->Reset(m_commandAllocator.Get(), nullptr);
 
-	const UINT l_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-	auto       l_resource        = m_swapChainBuffers[l_backBufferIndex].Get();
 
-	if (!l_resource)
-	{
-		assert(false && "スワップチェーン用のバッファーが作製されていません");
-		return;
-	}
-
-	SetResourceBarrier(l_resource, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_rtvDescriptorHeap->GetRTVCPUHandle(l_backBufferIndex);
-	m_graphicsCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-
-	const FLOAT clearColor[] = { 1.0f, 0.0f, 1.0f, 1.0f };
-	m_graphicsCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-
-	m_graphicsCommandList->Close(); // 描画終了
-
-	ID3D12CommandList* cmdLists[] = { m_graphicsCommandList.Get() };
-	m_commandQueue->ExecuteCommandLists(_countof(cmdLists), cmdLists); // コマンド実行
-
-	// フェンスでGPUと同期
-	m_fenceVal++;
-	m_commandQueue->Signal(m_fence.Get(), m_fenceVal);
-
-	if (m_fence->GetCompletedValue() < m_fenceVal)
-	{
-		m_fence->SetEventOnCompletion(m_fenceVal, m_fenceEvent);
-		WaitForSingleObject(m_fenceEvent, INFINITE);
-	}
-
-	m_swapChain->Present(1, 0); // 画面に反映
+}
+void FWK::Graphics::GraphicsManager::EndDraw()
+{
 }
 
 bool FWK::Graphics::GraphicsManager::CreateFactory()
