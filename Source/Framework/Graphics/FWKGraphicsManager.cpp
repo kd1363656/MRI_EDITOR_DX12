@@ -2,6 +2,11 @@
 
 bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size)
 {
+	if (!a_hWND)
+	{
+		std::string();
+	}
+
 	// スワップチェーンやデバイス作成に使うファクトリーを作成
 	if (!CreateFactory())
 	{
