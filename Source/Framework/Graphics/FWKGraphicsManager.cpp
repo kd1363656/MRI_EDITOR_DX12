@@ -58,6 +58,11 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 	return true;
 }
 
+void FWK::Graphics::GraphicsManager::BeginDraw()
+{
+
+}
+
 bool FWK::Graphics::GraphicsManager::CreateFactory()
 {
 	UINT l_flagsDXGI = 0U;
@@ -148,7 +153,8 @@ bool FWK::Graphics::GraphicsManager::CreateCommandObjects()
 		return false;
 	}
 
-	// コマンドアロケーターの作成(第一引数 : 作製するコマンドアロケーターの種類、第二引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
+	// コマンドアロケーターの作成
+	// 第一引数 : 作製するコマンドアロケーターの種類、第二引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
 	auto l_hr = m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT , IID_PPV_ARGS(&m_commandAllocator));
 
 	// コマンドアロケータ作成に失敗したら"assert"
@@ -195,17 +201,18 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const F
 		return false;
 	}
 
+	// スワップチェーンのパラメータを設定
 	DXGI_SWAP_CHAIN_DESC1 l_swapChainDesc = {};
-	l_swapChainDesc.BufferCount			  = FWK::CommonConstant::k_defaultBackBufferNum;
-	l_swapChainDesc.Width				  = a_size.width;
-	l_swapChainDesc.Height				  = a_size.height;
-	l_swapChainDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;
-	l_swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	l_swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	l_swapChainDesc.SampleDesc.Count      = k_sampleCount;
-	l_swapChainDesc.AlphaMode			  = DXGI_ALPHA_MODE_UNSPECIFIED;
-	l_swapChainDesc.Scaling               = DXGI_SCALING_STRETCH;
-	l_swapChainDesc.Stereo				  = FALSE;
+	l_swapChainDesc.BufferCount			  = FWK::CommonConstant::k_defaultBackBufferNum;		// スワップチェーン内のバッファ数(バックバッファ数は"2")
+	l_swapChainDesc.Width				  = a_size.width;									// 解像度の幅
+	l_swapChainDesc.Height				  = a_size.height;									// 解像度の高さ
+	l_swapChainDesc.Format				  = DXGI_FORMAT_R8G8B8A8_UNORM;						// 表示形式(ピクセルフォーマット)
+	l_swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;				// バックバッファーの使用目的
+	l_swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;					// バッファの切り替え
+	l_swapChainDesc.SampleDesc.Count      = k_sampleCount;									// マルチサンプルエイリアス
+	l_swapChainDesc.AlphaMode			  = DXGI_ALPHA_MODE_UNSPECIFIED;					// アルファブレンドの方法
+	l_swapChainDesc.Scaling               = DXGI_SCALING_STRETCH;							// ウィンドウサイズとバックバッファサイズが異なる場合のスケーリング方法。
+	l_swapChainDesc.Stereo				  = FALSE;											// 全画面表示モードまたはスワップチェーンバックバッファーがステレオかどうかを指定
 
 	ComPtr<IDXGISwapChain1> l_swapChainCache = nullptr;
 
@@ -214,7 +221,7 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChain(const HWND a_hWND , const F
 													  &l_swapChainDesc     ,	// 第三引数 : スワップチェーンのパラメーター
 													  nullptr              ,	// 第四引数 : フルスクリーン時の設定
 													  nullptr			   ,	// 第五引数 : モニター指定("nullptr"で自動選択)
-													  &l_swapChainCache);		// 結果格納変数	
+													  &l_swapChainCache);		// 第六引数 : 結果格納変数	
 	if (FAILED(l_hr))
 	{
 		assert(false && "スワップチェーンの作製に失敗しました。");
@@ -302,20 +309,14 @@ bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
 
 bool FWK::Graphics::GraphicsManager::CreateFence()
 {
+	// 第一引数 : 初期フェンス値、第二引数 : フェンスのオプション、第三引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
 	if (FAILED(m_device->CreateFence(m_fenceVal , D3D12_FENCE_FLAG_NONE , IID_PPV_ARGS(&m_fence))))
 	{
 		assert(false && "フェンスの作成に失敗");
 		return false;
 	}
 
-	m_fenceEvent = CreateEvent(nullptr  ,  FALSE , FALSE , nullptr);
-	if (!m_fenceEvent)
-	{
-		assert(false && "フェンスイベントの作成に失敗");
-		return false;
-	}
-
-	return true;
+	return CreateFenceEvent();
 }
 
 #if defined (_DEBUG)
@@ -327,6 +328,18 @@ void FWK::Graphics::GraphicsManager::EnableDebugLayer() const
 	l_debugController->EnableDebugLayer();
 }
 #endif
+
+bool FWK::Graphics::GraphicsManager::CreateFenceEvent()
+{
+	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	if (!m_fenceEvent)
+	{
+		assert(false && "フェンスイベントの作成に失敗");
+		return false;
+	}
+
+	return true;
+}
 
 void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const
 {

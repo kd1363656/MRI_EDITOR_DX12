@@ -17,6 +17,7 @@ namespace FWK::Graphics
 
 	private:
 
+		// 複数のディスクリプタを管理するためのヒープ
 		ComPtr<ID3D12DescriptorHeap> m_descriptorHeap = nullptr;
 
 		UINT m_descriptorSize = 0U;

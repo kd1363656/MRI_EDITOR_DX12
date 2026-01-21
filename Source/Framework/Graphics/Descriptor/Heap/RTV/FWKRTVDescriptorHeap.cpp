@@ -53,7 +53,7 @@ UINT FWK::Graphics::RTVDescriptorHeap::CreateRTV(const ComPtr<ID3D12Resource2>& 
 	auto l_handle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();	// ヒープの先端を表す"CPU"記述子ハンドル
 	l_handle.ptr += static_cast<SIZE_T>(m_currentIndex) * m_descriptorSize;	// ヒープのディスクリプタサイズを今の要素数と書けることで配列を進める
 
-	// 第一引数 : 作製対処のリソース、第二引数 : パラメータアドレス("nullptr"ならデフォルト設定が代入される、第三引数 : 書き込む"RTV"ディスクリプタの位置) 
+	// 第一引数 : 作製対象のリソース、第二引数 : パラメータアドレス("nullptr"ならデフォルト設定が代入される、第三引数 : 書き込む"RTV"ディスクリプタの位置) 
 	l_device->CreateRenderTargetView(a_resource.Get() , nullptr , l_handle);
 
 	return m_currentIndex++;	// 使用済みのインデックスを返す
@@ -63,10 +63,11 @@ D3D12_CPU_DESCRIPTOR_HANDLE FWK::Graphics::RTVDescriptorHeap::GetRTVCPUHandle(UI
 {
 	if (!m_descriptorHeap || a_index >= m_maxIndex)
 	{
-		assert(false && "でスクリプタヒープの作製かヒープ領域を超えています。");
+		assert(false && "デスクリプタヒープの作製かヒープ領域を超えています。");
 		return D3D12_CPU_DESCRIPTOR_HANDLE();
 	}
 
+	// ディスクリプタヒープ内の先頭のアドレスを取得
 	D3D12_CPU_DESCRIPTOR_HANDLE l_handle = m_descriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	l_handle.ptr += static_cast<SIZE_T>(a_index) * m_descriptorSize;
 
