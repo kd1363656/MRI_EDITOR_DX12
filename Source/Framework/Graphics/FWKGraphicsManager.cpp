@@ -72,6 +72,9 @@ void FWK::Graphics::GraphicsManager::BeginDraw()
 	// 現在のバックバッファーの"RTV"用の"CPU"ハンドルを取得
 	auto l_handle = m_rtvDescriptorHeap->GetRTVCPUHandle(l_bbIDX);
 
+	// "GPU"にリソースの状態の遷移を伝える
+	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get() , D3D12_RESOURCE_STATE_RENDER_TARGET , D3D12_RESOURCE_STATE_PRESENT);
+
 	// 第一引数 : 描画先レンダーターゲットの数(通常は"1")、第二引数 : 描画先レンダーターゲットのハンドルのポインタ、第三引数 : "true"で連続したディスクリプタヒープ内の範囲"false"で複数の非連続ハンドルを指定、第四引数 : デプスステンシルビュー
 	m_commandList->OMSetRenderTargets(k_renderTargetDescriptorNum , &l_handle , true , nullptr);
 
@@ -80,7 +83,7 @@ void FWK::Graphics::GraphicsManager::BeginDraw()
 }
 void FWK::Graphics::GraphicsManager::EndDraw()
 {
-	if (!m_commandList || !m_commandQueue || m_commandAllocator)
+	if (!m_commandList || !m_commandQueue || !m_commandAllocator)
 	{
 		return;
 	}
@@ -98,8 +101,8 @@ void FWK::Graphics::GraphicsManager::EndDraw()
 	WaitForSyncCommandQueue();
 
 	// アロケーターとコマンドリストをクリア
-	m_commandAllocator.Reset();
-	m_commandList.Reset     ();
+	m_commandAllocator->Reset();
+	m_commandList->Reset     (m_commandAllocator.Get() ,  nullptr);
 
 	// スクリーンフリップ処理
 	// 第一引数 : 同期間隔(60"FPS"想定)、第二引数 : オプションフラグ
@@ -414,13 +417,20 @@ void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resou
 		return;
 	}
 	
-	D3D12_RESOURCE_BARRIER l_barrier = {};
-	l_barrier.Type					 = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	l_barrier.Flags                  = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	l_barrier.Transition.pResource   = a_resource.Get();
-	l_barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	l_barrier.Transition.StateBefore = a_befor;
-	l_barrier.Transition.StateAfter  = a_after;
+	// リソースバリアのパラメーター
+	D3D12_RESOURCE_BARRIER l_barrier = {};										
+	l_barrier.Type					 = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;  // リソースバリアの種類(トランジションバリア(あるリソースのステートを別のステートに変えるもの))
+	l_barrier.Flags                  = D3D12_RESOURCE_BARRIER_FLAG_NONE;		// オプションフラグ
+	l_barrier.Transition.pResource   = a_resource.Get();						// ステートを変えたいリソースのポインタ
+	l_barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES; // どのサブリソースに対してバリアを掛けるか
+	l_barrier.Transition.StateBefore = a_befor;									// 現在のリソースのステート
+	l_barrier.Transition.StateAfter  = a_after;									// このバリア処理で移行したいステート
 
 	m_commandList->ResourceBarrier(k_setBarrierNum , &l_barrier);
+}
+
+FWK::Graphics::GraphicsManager::GraphicsManager() = default;
+FWK::Graphics::GraphicsManager::~GraphicsManager()
+{
+	WaitForSyncCommandQueue();
 }

@@ -41,6 +41,7 @@ namespace FWK::Graphics
 		static constexpr UINT k_executeCommandListNum     = 1U;
 		static constexpr UINT k_defaultSyncInterval       = 1U;
 
+		// "GPU"リソースのステート遷移
 		void SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const ;
 
 		static constexpr UINT k_sampleCount   = 1U;
@@ -68,7 +69,7 @@ namespace FWK::Graphics
 		//===============================
 		friend class FWK::SingletonBase<FWK::Graphics::GraphicsManager>;
 
-		GraphicsManager ()          = default;
-		~GraphicsManager() override = default;
+		GraphicsManager ();
+		~GraphicsManager() override;
 	};
 }
