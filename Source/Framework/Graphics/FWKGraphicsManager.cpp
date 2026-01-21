@@ -2,6 +2,10 @@
 
 bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size)
 {
+#if defined (_DEBUG)
+	EnableDebugLayer(); // "D3D12"のデバックレイヤーを有効化
+#endif
+
 	// スワップチェーンやデバイス作成に使うファクトリーを作成
 	if (!CreateFactory())
 	{
@@ -54,21 +58,11 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 	return true;
 }
 
-void FWK::Graphics::GraphicsManager::BeginDraw()
-{
-	
-}
-void FWK::Graphics::GraphicsManager::EndDraw()
-{
-
-}
-
 bool FWK::Graphics::GraphicsManager::CreateFactory()
 {
 	UINT l_flagsDXGI = 0U;
 
 #if defined (_DEBUG)
-	EnableDebugLayer();							// "D3D12"のデバックレイヤーを有効化
 	l_flagsDXGI |= DXGI_CREATE_FACTORY_DEBUG;	// "DXGI"関係のログ出力を可能にするフラグ
 #endif
 
@@ -180,10 +174,10 @@ bool FWK::Graphics::GraphicsManager::CreateCommandObjects()
 	}
 
 	// コマンドリスト作成
-	l_hr = m_device->CreateCommandList1(0U							        ,	// 第一引数 : 複数の"GPU"を使うかどうか
-										D3D12_COMMAND_LIST_TYPE_DIRECT      ,	// 第二引数 : 作製するコマンドリストの種類
-										D3D12_COMMAND_LIST_FLAG_NONE        ,	// 第三引数 : 作製フラグ
-									    IID_PPV_ARGS(&m_graphicsCommandList));	// 第四引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
+	l_hr = m_device->CreateCommandList1(FWK::CommonConstant::k_singleGPUNodeMask	 ,	// 第一引数 : 複数の"GPU"を使うかどうか
+										D3D12_COMMAND_LIST_TYPE_DIRECT           ,	// 第二引数 : 作製するコマンドリストの種類
+										D3D12_COMMAND_LIST_FLAG_NONE             ,	// 第三引数 : 作製フラグ
+									    IID_PPV_ARGS(&m_commandList));				// 第四引数 : 取得するインターフェースの"ID"と、結果を受け取るポインタ
 
 	if (FAILED(l_hr))
 	{
@@ -267,7 +261,6 @@ bool FWK::Graphics::GraphicsManager::CreateRTVDescriptorHeap()
 		return false;
 	}
 
-
 	return true;
 }
 bool FWK::Graphics::GraphicsManager::CreateSwapChainRTV()
@@ -335,11 +328,6 @@ void FWK::Graphics::GraphicsManager::EnableDebugLayer() const
 }
 #endif
 
-void FWK::Graphics::GraphicsManager::WaitForCommandQueue()
-{
-
-}
-
 void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const
 {
 	if (!a_resource)
@@ -348,7 +336,7 @@ void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resou
 		return;
 	}
 
-	if (!m_graphicsCommandList)
+	if (!m_commandList)
 	{
 		assert(false && "コマンドリストが作製されていません");
 		return;
@@ -362,5 +350,5 @@ void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resou
 	l_barrier.Transition.StateBefore = a_befor;
 	l_barrier.Transition.StateAfter  = a_after;
 
-	m_graphicsCommandList->ResourceBarrier(k_setBarrierNum , &l_barrier);
+	m_commandList->ResourceBarrier(k_setBarrierNum , &l_barrier);
 }

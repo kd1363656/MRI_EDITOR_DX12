@@ -8,9 +8,6 @@ namespace FWK::Graphics
 
 		bool Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 	
-		void BeginDraw();
-		void EndDraw  ();
-
 		const ComPtr<ID3D12Device10>& GetDevice() const { return m_device; }
 
 	private:
@@ -34,8 +31,6 @@ namespace FWK::Graphics
 		static constexpr const wchar_t* const k_lineBreakSTR		 = L"バックバッファーの容量を超えました。";
 #endif
 
-		void WaitForCommandQueue();
-
 		void SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const ;
 
 		static constexpr UINT k_sampleCount   = 1U;
@@ -47,9 +42,9 @@ namespace FWK::Graphics
 		ComPtr<IDXGIFactory7>   m_dxgiFactory = nullptr;	// 使用するグラフィックカードの設定やスワップチェーンの作製に使用
 		ComPtr<IDXGISwapChain4> m_swapChain   = nullptr;	// ダブルバッファリングにおける描画バッファの切り替えに使用するスワップチェーン
 
-		ComPtr<ID3D12GraphicsCommandList7> m_graphicsCommandList = nullptr;
-		ComPtr<ID3D12CommandQueue>         m_commandQueue        = nullptr;
-		ComPtr<ID3D12CommandAllocator>     m_commandAllocator    = nullptr;
+		ComPtr<ID3D12GraphicsCommandList7> m_commandList      = nullptr;
+		ComPtr<ID3D12CommandQueue>         m_commandQueue     = nullptr;
+		ComPtr<ID3D12CommandAllocator>     m_commandAllocator = nullptr;
 
 		ComPtr<ID3D12Fence1> m_fence = nullptr;	// "CPU"と"GPU"間の同期をとるのに必要
 
