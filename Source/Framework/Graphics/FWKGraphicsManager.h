@@ -23,6 +23,8 @@ namespace FWK::Graphics
 		bool CreateSwapChainRTV     ();
 		bool CreateFence            ();
 
+		void WaitForSyncCommandQueue();
+
 #if defined (_DEBUG)
 		void EnableDebugLayer() const;
 #endif
@@ -38,8 +40,6 @@ namespace FWK::Graphics
 		static constexpr UINT k_renderTargetDescriptorNum = 1U;
 		static constexpr UINT k_executeCommandListNum     = 1U;
 		static constexpr UINT k_defaultSyncInterval       = 1U;
-
-		bool CreateFenceEvent();
 
 		void SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const ;
 

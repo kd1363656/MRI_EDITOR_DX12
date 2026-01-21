@@ -61,10 +61,7 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 
 void FWK::Graphics::GraphicsManager::BeginDraw()
 {
-	if (!m_commandAllocator || !m_commandList || !m_rtvDescriptorHeap || !m_swapChain)
-	{
-		return;
-	}
+	if (!m_commandAllocator || !m_commandList || !m_rtvDescriptorHeap || !m_swapChain) { return; }
 
 	// コマンドアロケータに蓄積されている描画命令をクリア
 	m_commandAllocator->Reset();
@@ -96,6 +93,9 @@ void FWK::Graphics::GraphicsManager::EndDraw()
 	
 	// 第一引数 : 実行するコマンドリストの数、第二引数 : 実行するコマンドリストの配列。
 	m_commandQueue->ExecuteCommandLists(k_executeCommandListNum , l_cmdList);
+
+	// "GPU"と"CPU"の同期をとる
+	WaitForSyncCommandQueue();
 
 	// アロケーターとコマンドリストをクリア
 	m_commandAllocator.Reset();
@@ -359,7 +359,35 @@ bool FWK::Graphics::GraphicsManager::CreateFence()
 		return false;
 	}
 
-	return CreateFenceEvent();
+	return true;
+}
+
+void FWK::Graphics::GraphicsManager::WaitForSyncCommandQueue()
+{
+	if (!m_commandQueue || !m_fence) { return; }
+
+	// 第一引数 : 値を送る対象のフェンス、第二引数 : "GPU"が到達したことを示すフェンスの値
+	m_commandQueue->Signal(m_fence.Get() , ++m_fenceVal);
+
+	// "GPU"がまだこのフェンス地に到達していなければ実行しない
+	if (m_fence->GetCompletedValue() != m_fenceVal)
+	{
+		// イベントオブジェクトを作成
+		// 
+		m_fenceEvent = CreateEvent(nullptr,		// セキュリティ属性の指定
+								   FALSE  ,		// 自動リセットイベント
+								   FALSE  ,		// 初期状態は日シグナル
+								   nullptr);	// 名前をつけない匿名イベント
+		if (!m_fenceEvent)
+		{
+			assert(false && "フェンスイベントの作成に失敗");
+			return;
+		}
+
+		m_fence->SetEventOnCompletion(m_fenceVal   , m_fenceEvent);	 // "GPU"が"m_fenceVal"に到達したら、イベントをシグナル状態にするように登録
+		WaitForSingleObject          (m_fenceEvent , INFINITE);		 // イベント発生まで待ち続ける
+		CloseHandle                  (m_fenceEvent);				 // イベントハンドルを閉じる 
+	}
 }
 
 #if defined (_DEBUG)
@@ -371,18 +399,6 @@ void FWK::Graphics::GraphicsManager::EnableDebugLayer() const
 	l_debugController->EnableDebugLayer();
 }
 #endif
-
-bool FWK::Graphics::GraphicsManager::CreateFenceEvent()
-{
-	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-	if (!m_fenceEvent)
-	{
-		assert(false && "フェンスイベントの作成に失敗");
-		return false;
-	}
-
-	return true;
-}
 
 void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const
 {
