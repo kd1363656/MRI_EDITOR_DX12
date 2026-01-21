@@ -63,9 +63,10 @@ void FWK::Graphics::GraphicsManager::BeginDraw()
 {
 	if (!m_commandAllocator || !m_commandList || !m_rtvDescriptorHeap || !m_swapChain) { return; }
 
-	// コマンドアロケータに蓄積されている描画命令をクリア
+	// アロケーターとコマンドリストをクリア
 	m_commandAllocator->Reset();
-
+	m_commandList->Reset     (m_commandAllocator.Get() ,  nullptr);
+	
 	// 裏画面のバッファーのインデックスを取得
 	const UINT l_bbIDX = m_swapChain->GetCurrentBackBufferIndex();
 
