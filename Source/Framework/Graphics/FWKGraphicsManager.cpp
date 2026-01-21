@@ -56,18 +56,11 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 
 void FWK::Graphics::GraphicsManager::BeginDraw()
 {
-	if (!m_swapChain || !m_commandAllocator)
-	{
-		return;
-	}
-
-	m_commandAllocator->Reset   ();
-	m_graphicsCommandList->Reset(m_commandAllocator.Get(), nullptr);
-
-
+	
 }
 void FWK::Graphics::GraphicsManager::EndDraw()
 {
+
 }
 
 bool FWK::Graphics::GraphicsManager::CreateFactory()
@@ -342,7 +335,12 @@ void FWK::Graphics::GraphicsManager::EnableDebugLayer() const
 }
 #endif
 
-void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after)
+void FWK::Graphics::GraphicsManager::WaitForCommandQueue()
+{
+
+}
+
+void FWK::Graphics::GraphicsManager::SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const
 {
 	if (!a_resource)
 	{

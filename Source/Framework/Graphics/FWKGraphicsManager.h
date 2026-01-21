@@ -34,7 +34,9 @@ namespace FWK::Graphics
 		static constexpr const wchar_t* const k_lineBreakSTR		 = L"バックバッファーの容量を超えました。";
 #endif
 
-		void SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after);
+		void WaitForCommandQueue();
+
+		void SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const ;
 
 		static constexpr UINT k_sampleCount   = 1U;
 		static constexpr UINT k_setBarrierNum = 1U;
