@@ -9,6 +9,7 @@ namespace FWK::Graphics
 		bool Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 
 		void BeginDraw();
+		void EndDraw  ();
 
 		const ComPtr<ID3D12Device10>& GetDevice() const { return m_device; }
 
@@ -32,6 +33,12 @@ namespace FWK::Graphics
 		static constexpr const wchar_t* const k_overBackBufferText	 = L"\n";
 		static constexpr const wchar_t* const k_lineBreakSTR		 = L"バックバッファーの容量を超えました。";
 #endif
+		static constexpr FLOAT k_clearBackBufferColor[] = { 1.0F , 0.0F , 1.0F , 1.0F };
+
+		static constexpr UINT k_renderTargetDescriptorNum = 1U;
+		static constexpr UINT k_executeCommandListNum     = 1U;
+		static constexpr UINT k_defaultSyncInterval       = 1U;
+
 		bool CreateFenceEvent();
 
 		void SetResourceBarrier(const ComPtr<ID3D12Resource>& a_resource , D3D12_RESOURCE_STATES a_befor , D3D12_RESOURCE_STATES a_after) const ;

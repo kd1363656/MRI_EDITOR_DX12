@@ -2,6 +2,7 @@
 
 bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size)
 {
+	// デバック時のみ有効化(なぜなら処理が重いから)
 #if defined (_DEBUG)
 	EnableDebugLayer(); // "D3D12"のデバックレイヤーを有効化
 #endif
@@ -60,7 +61,49 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 
 void FWK::Graphics::GraphicsManager::BeginDraw()
 {
+	if (!m_commandAllocator || !m_commandList || !m_rtvDescriptorHeap || !m_swapChain)
+	{
+		return;
+	}
 
+	// コマンドアロケータに蓄積されている描画命令をクリア
+	m_commandAllocator->Reset();
+
+	// 裏画面のバッファーのインデックスを取得
+	const UINT l_bbIDX = m_swapChain->GetCurrentBackBufferIndex();
+
+	// 現在のバックバッファーの"RTV"用の"CPU"ハンドルを取得
+	auto l_handle = m_rtvDescriptorHeap->GetRTVCPUHandle(l_bbIDX);
+
+	// 第一引数 : 描画先レンダーターゲットの数(通常は"1")、第二引数 : 描画先レンダーターゲットのハンドルのポインタ、第三引数 : "true"で連続したディスクリプタヒープ内の範囲"false"で複数の非連続ハンドルを指定、第四引数 : デプスステンシルビュー
+	m_commandList->OMSetRenderTargets(k_renderTargetDescriptorNum , &l_handle , true , nullptr);
+
+	// レンダーターゲットをバックバッファーの色でクリア
+	m_commandList->ClearRenderTargetView(l_handle , k_clearBackBufferColor , 0 ,  nullptr);
+}
+void FWK::Graphics::GraphicsManager::EndDraw()
+{
+	if (!m_commandList || !m_commandQueue || m_commandAllocator)
+	{
+		return;
+	}
+
+	// 描画命令をすべて書き終えたら"Close"する、"Close"しないと描画の実行ができない
+	m_commandList->Close();
+
+	// コマンドリストの型を合わせる
+	ID3D12CommandList* l_cmdList[] = { m_commandList.Get() };
+	
+	// 第一引数 : 実行するコマンドリストの数、第二引数 : 実行するコマンドリストの配列。
+	m_commandQueue->ExecuteCommandLists(k_executeCommandListNum , l_cmdList);
+
+	// アロケーターとコマンドリストをクリア
+	m_commandAllocator.Reset();
+	m_commandList.Reset     ();
+
+	// スクリーンフリップ処理
+	// 第一引数 : 同期間隔(60"FPS"想定)、第二引数 : オプションフラグ
+	m_swapChain->Present(k_defaultSyncInterval ,  0U);
 }
 
 bool FWK::Graphics::GraphicsManager::CreateFactory()

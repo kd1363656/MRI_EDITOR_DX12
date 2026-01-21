@@ -56,6 +56,10 @@ void Application::Execute()
 		// もしゲームループ終了フラグが立っていたら"break"
 		if (m_isEndGameLoop) { break; }
 
+		// アプリケーション描画更新
+		FWK::Graphics::GraphicsManager::GetInstance().BeginDraw();
+		FWK::Graphics::GraphicsManager::GetInstance().EndDraw  ();
+
 		// フレームレート制御
 		m_fpsController.Update();
 
