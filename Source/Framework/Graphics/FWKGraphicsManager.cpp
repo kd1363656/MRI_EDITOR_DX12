@@ -74,7 +74,7 @@ void FWK::Graphics::GraphicsManager::BeginDraw()
 	auto l_handle = m_rtvDescriptorHeap->GetRTVCPUHandle(l_bbIDX);
 
 	// "GPU"にリソースの状態の遷移を伝える
-	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get() , D3D12_RESOURCE_STATE_RENDER_TARGET , D3D12_RESOURCE_STATE_PRESENT);
+	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get() , D3D12_RESOURCE_STATE_PRESENT , D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	// 第一引数 : 描画先レンダーターゲットの数(通常は"1")、第二引数 : 描画先レンダーターゲットのハンドルのポインタ、第三引数 : "true"で連続したディスクリプタヒープ内の範囲"false"で複数の非連続ハンドルを指定、第四引数 : デプスステンシルビュー
 	m_commandList->OMSetRenderTargets(k_renderTargetDescriptorNum , &l_handle , true , nullptr);
@@ -89,6 +89,11 @@ void FWK::Graphics::GraphicsManager::EndDraw()
 		return;
 	}
 
+	// 裏画面のバッファーのインデックスを取得
+	const UINT l_bbIDX = m_swapChain->GetCurrentBackBufferIndex();
+	// "GPU"にリソースの状態の遷移を伝える
+	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
 	// 描画命令をすべて書き終えたら"Close"する、"Close"しないと描画の実行ができない
 	m_commandList->Close();
 
@@ -100,10 +105,6 @@ void FWK::Graphics::GraphicsManager::EndDraw()
 
 	// "GPU"と"CPU"の同期をとる
 	WaitForSyncCommandQueue();
-
-	// アロケーターとコマンドリストをクリア
-	m_commandAllocator->Reset();
-	m_commandList->Reset     (m_commandAllocator.Get() ,  nullptr);
 
 	// スクリーンフリップ処理
 	// 第一引数 : 同期間隔(60"FPS"想定)、第二引数 : オプションフラグ
