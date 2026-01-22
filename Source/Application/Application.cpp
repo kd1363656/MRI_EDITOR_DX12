@@ -39,6 +39,9 @@ void Application::Execute()
 	// ゲームループ
 	m_fpsController.Init();
 
+	FWK::Graphics::Mesh l_mesh = {};
+	l_mesh.Create();
+
 	while (true)
 	{
 		// "FPS"の計測

@@ -145,9 +145,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Asset\Data\Setting\Window\WindowConfig.json">
       <Filter>Asset\Data\Setting\Window</Filter>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Asset\Data\Shader\Test\TestShader_VS.hlsl">
+      <Filter>Asset\Data\Shader\Test</Filter>
+    </FxCompile>
+    <FxCompile Include="Asset\Data\Shader\Test\TestShader_PS.hlsl">
+      <Filter>Asset\Data\Shader\Test</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

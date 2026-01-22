@@ -16,8 +16,11 @@
 // ファイル入出力便利関数
 #include "Utility/FileIO/FWKFileIOUtility.h"
 
-// "RTV"ヒープb
+// "RTV"ヒープ
 #include "Graphics/Descriptor/Heap/RTV/FWKRTVDescriptorHeap.h"
+
+// "Mesh"
+#include "Graphics/Mesh/FWKMesh.h"
 
 // "Graphic"クラス
 #include "Graphics/FWKGraphicsManager.h"
