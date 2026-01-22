@@ -2,9 +2,9 @@
 
 void FWK::Graphics::Mesh::Create()
 {
-	m_vertices[0] = { -1.0F , -1.0F };
-	m_vertices[1] = {  1.0F ,  1.0F };
-	m_vertices[2] = {  0.0F ,  1.0F };
+	m_vertices[0] = { -1.0F , -1.0F , 0.0F };
+	m_vertices[1] = { -1.0F ,  1.0F , 0.0F };
+	m_vertices[2] = {  1.0F , -1.0F , 0.0F };
 
 	// ヒーププロパティのパラメータ
 	D3D12_HEAP_PROPERTIES l_heapProp = {};

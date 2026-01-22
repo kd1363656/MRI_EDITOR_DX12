@@ -7,6 +7,8 @@ public:
 	void Execute    ();
 	void EndGameLoop();
 
+	const auto& GetWindowSize() const { return m_windowSize; }
+
 	HWND GetHWND() const { return m_window.GetHWND(); }
 
 	int GetNowFPS    () const { return m_fpsController.GetNowFPS    (); }

@@ -11,6 +11,9 @@ namespace FWK::Graphics
 
 		void Init();
 
+		auto& GetWorkPipeline     () { return m_pipeline;      }
+		auto& GetWorkRootSignature() { return m_rootSignature; }
+
 	private:
 
 		ComPtr<ID3DBlob> m_vsBlob = nullptr;

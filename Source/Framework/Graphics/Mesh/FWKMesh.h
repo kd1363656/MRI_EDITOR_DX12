@@ -11,6 +11,8 @@ namespace FWK::Graphics
 
 		void Create();
 
+		auto& GetWorkVertexBufferView() { return m_vertexBufferView; }
+
 	private:
 
 		std::array<Math::Vector3 , 3> m_vertices;		  // í∏ì_ç¿ïW

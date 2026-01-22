@@ -12,9 +12,12 @@ namespace FWK::Graphics
 		void Init();
 
 		auto& GetWorkRootSignature() { return m_rootSignature; }
+		auto& GetWorkVBView       () { return m_vbView;        }
 
 	private:
 
 		ComPtr<ID3D12RootSignature> m_rootSignature = nullptr;
+
+		D3D12_VERTEX_BUFFER_VIEW m_vbView = {};
 	};
 }

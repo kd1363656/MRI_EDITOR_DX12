@@ -8,7 +8,7 @@ namespace FWK::Graphics
 
 		bool Init(const HWND a_hWND , const FWK::CommonStruct::Dimension2D& a_size);
 
-		void BeginDraw();
+		void BeginDraw(const ComPtr<ID3D12PipelineState>& a_pipelineState , const ComPtr<ID3D12RootSignature>& a_rootSignature , const D3D12_VIEWPORT& a_viewPort , const D3D12_RECT& a_scissorrect , const D3D12_VERTEX_BUFFER_VIEW& a_vbView);
 		void EndDraw  ();
 
 		const ComPtr<ID3D12Device10>& GetDevice() const { return m_device; }

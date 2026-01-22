@@ -45,6 +45,18 @@ void Application::Execute()
 	FWK::Graphics::Shader l_shader = {};
 	l_shader.Init();
 
+	auto& l_pipeline = l_shader.GetWorkPipeline();
+	if (!l_pipeline)
+	{
+		assert(false && "パイプラインが初期化されていません。");
+	}
+
+	auto& l_rootSignature = l_shader.GetWorkRootSignature();
+	if (!l_rootSignature)
+	{
+		assert(false && "ルートシグネチャが初期化されていません。");
+	}
+
 	while (true)
 	{
 		// "FPS"の計測
@@ -63,7 +75,7 @@ void Application::Execute()
 		if (m_isEndGameLoop) { break; }
 
 		// アプリケーション描画更新
-		FWK::Graphics::GraphicsManager::GetInstance().BeginDraw();
+		FWK::Graphics::GraphicsManager::GetInstance().BeginDraw(l_pipeline->GetWorkPipelineState() , l_rootSignature->GetWorkRootSignature() , l_pipeline->GetViewPort() , l_pipeline->GetScissorrect() , l_mesh.GetWorkVertexBufferView());
 		FWK::Graphics::GraphicsManager::GetInstance().EndDraw  ();
 
 		// フレームレート制御

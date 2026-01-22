@@ -1,5 +1,7 @@
 #include "FWKPipeline.h"
 
+#include "Application/Application.h"
+
 void FWK::Graphics::Pipeline::Init(const std::vector<ComPtr<ID3DBlob>>& a_bufferList , const ComPtr<ID3D12RootSignature>& a_rootSignature)
 {
 	if (!a_rootSignature)
@@ -68,8 +70,6 @@ void FWK::Graphics::Pipeline::Init(const std::vector<ComPtr<ID3DBlob>>& a_buffer
 	l_desc.SampleDesc.Count   = 1;	// サンプリングは"1"ピクセルにつき"1"
 	l_desc.SampleDesc.Quality = 0;	// クオリティは最低
 
-	ComPtr<ID3D12PipelineState> l_pipelineState = nullptr;
-
 	const auto& l_graphicsManager = FWK::Graphics::GraphicsManager::GetInstance();
 	auto		l_device		  = l_graphicsManager.GetDevice                ();
 
@@ -79,10 +79,25 @@ void FWK::Graphics::Pipeline::Init(const std::vector<ComPtr<ID3DBlob>>& a_buffer
 		return;
 	}
 
-	auto l_result = l_device->CreateGraphicsPipelineState(&l_desc , IID_PPV_ARGS(&l_pipelineState));
+	auto l_result = l_device->CreateGraphicsPipelineState(&l_desc , IID_PPV_ARGS(&m_pipelineState));
 
 	if (l_result == E_INVALIDARG)
 	{
 		assert(false && "ルートシグネチャが実装されていないのでエラー");
+		return;
 	}
+
+	// ビューポート
+	m_viewPort.Width    = static_cast<float>(Application::GetInstance().GetWindowSize().width);	    // 出力先の幅
+	m_viewPort.Height   = static_cast<float>(Application::GetInstance().GetWindowSize().height);    // 出力先の高さ
+	m_viewPort.TopLeftX = 0;																		// 出力先の左上座標"X"
+	m_viewPort.TopLeftY = 0;																		// 出力先の左上座標"Y"
+	m_viewPort.MaxDepth = 1.0F;																		// 深度最大値
+	m_viewPort.MinDepth = 0.0F;																		// 深度最小
+
+	// シザー矩形
+	m_scissorrect.top    = 0;																		// 切り抜き上座標
+	m_scissorrect.left   = 0;																		// 切り抜き左座標
+	m_scissorrect.right  = m_scissorrect.left + Application::GetInstance().GetWindowSize().width;	// 切り抜き右座標
+	m_scissorrect.bottom = m_scissorrect.top  + Application::GetInstance().GetWindowSize().height;	// 切り抜き下座標
 }

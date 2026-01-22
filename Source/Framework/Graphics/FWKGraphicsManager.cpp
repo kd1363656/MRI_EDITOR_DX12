@@ -66,9 +66,9 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 	return true;
 }
 
-void FWK::Graphics::GraphicsManager::BeginDraw()
+void FWK::Graphics::GraphicsManager::BeginDraw(const ComPtr<ID3D12PipelineState>& a_pipelineState, const ComPtr<ID3D12RootSignature>& a_rootSignature, const D3D12_VIEWPORT& a_viewPort, const D3D12_RECT& a_scissorrect, const D3D12_VERTEX_BUFFER_VIEW& a_vbView)
 {
-	if (!m_commandAllocator || !m_commandList || !m_rtvDescriptorHeap || !m_swapChain) { return; }
+	if (!m_commandAllocator || !m_commandList || !m_rtvDescriptorHeap || !m_swapChain || !a_pipelineState || !a_rootSignature) { return; }
 
 	// 裏画面のバッファーのインデックスを取得
 	const UINT l_bbIDX = m_swapChain->GetCurrentBackBufferIndex();
@@ -77,13 +77,28 @@ void FWK::Graphics::GraphicsManager::BeginDraw()
 	auto l_handle = m_rtvDescriptorHeap->GetRTVCPUHandle(l_bbIDX);
 
 	// "GPU"にリソースの状態の遷移を伝える"Present -> RenderTarget"
-	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get() , D3D12_RESOURCE_STATE_PRESENT , D3D12_RESOURCE_STATE_RENDER_TARGET);
+	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	// 第一引数 : 描画先レンダーターゲットの数(通常は"1")、第二引数 : 描画先レンダーターゲットのハンドルのポインタ、第三引数 : "true"で連続したディスクリプタヒープ内の範囲"false"で複数の非連続ハンドルを指定、第四引数 : デプスステンシルビュー
-	m_commandList->OMSetRenderTargets(k_renderTargetDescriptorNum , &l_handle , true , nullptr);
+	m_commandList->OMSetRenderTargets(k_renderTargetDescriptorNum, &l_handle, true, nullptr);
 
 	// レンダーターゲットをバックバッファーの色でクリア
-	m_commandList->ClearRenderTargetView(l_handle , k_clearBackBufferColor , 0 ,  nullptr);
+	m_commandList->ClearRenderTargetView(l_handle, k_clearBackBufferColor, 0, nullptr);
+
+	m_commandList->SetPipelineState(a_pipelineState.Get());
+
+	m_commandList->SetGraphicsRootSignature(a_rootSignature.Get());
+
+	m_commandList->RSSetViewports(1, &a_viewPort);
+
+	m_commandList->RSSetScissorRects(1, &a_scissorrect);
+
+	m_commandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_commandList->IASetVertexBuffers(0, 1, &a_vbView);
+
+	m_commandList->DrawInstanced(3, 1, 0, 0);
+
 }
 void FWK::Graphics::GraphicsManager::EndDraw()
 {
