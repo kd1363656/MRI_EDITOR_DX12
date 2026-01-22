@@ -76,6 +76,9 @@
     <Filter Include="Source\Framework\Graphics\Shader">
       <UniqueIdentifier>{e1610a98-dc0e-4e09-a4d5-e2196a9a4c40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Framework\Graphics\Shader\Pipeline">
+      <UniqueIdentifier>{045fbe2e-c0fb-4566-8bd9-a6280a416782}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -126,6 +129,9 @@
     <ClInclude Include="Source\Framework\Graphics\Shader\FWKShader.h">
       <Filter>Source\Framework\Graphics\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Framework\Graphics\Shader\Pipeline\FWKPipeline.h">
+      <Filter>Source\Framework\Graphics\Shader\Pipeline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp">
@@ -151,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="Source\Framework\Graphics\Shader\FWKShader.cpp">
       <Filter>Source\Framework\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framework\Graphics\Shader\Pipeline\FWKPipeline.cpp">
+      <Filter>Source\Framework\Graphics\Shader\Pipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

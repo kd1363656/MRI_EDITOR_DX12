@@ -25,5 +25,7 @@
 // "Shader"
 #include "Graphics/Shader/FWKShader.h"
 
+#include "Graphics/Shader/Pipeline/FWKPipeline.h"
+
 // "Graphic"ƒNƒ‰ƒX
 #include "Graphics/FWKGraphicsManager.h"
