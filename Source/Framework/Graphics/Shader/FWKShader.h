@@ -13,7 +13,7 @@ namespace FWK::Graphics
 
 	private:
 
-		ComPtr<ID3DBlob> vsBlob = nullptr;
-		ComPtr<ID3DBlob> psBlob = nullptr;
+		ComPtr<ID3DBlob> m_vsBlob = nullptr;
+		ComPtr<ID3DBlob> m_psBlob = nullptr;
 	};
 }

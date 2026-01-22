@@ -42,6 +42,9 @@ void Application::Execute()
 	FWK::Graphics::Mesh l_mesh = {};
 	l_mesh.Create();
 
+	FWK::Graphics::Shader l_shader = {};
+	l_shader.Init();
+
 	while (true)
 	{
 		// "FPS"‚ÌŒv‘ª

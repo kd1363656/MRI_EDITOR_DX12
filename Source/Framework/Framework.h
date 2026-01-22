@@ -22,5 +22,8 @@
 // "Mesh"
 #include "Graphics/Mesh/FWKMesh.h"
 
+// "Shader"
+#include "Graphics/Shader/FWKShader.h"
+
 // "Graphic"ƒNƒ‰ƒX
 #include "Graphics/FWKGraphicsManager.h"
