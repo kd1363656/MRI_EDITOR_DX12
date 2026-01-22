@@ -9,7 +9,9 @@ public:
 
 	HWND GetHWND() const { return m_window.GetHWND(); }
 
-	int GetNowFPS() const { return m_fpsController.GetNowFPS(); }
+	int GetNowFPS    () const { return m_fpsController.GetNowFPS    (); }
+	int GetMaxFPS    () const { return m_fpsController.GetMaxFPS    (); }
+	int GetDefaultFPS() const { return m_fpsController.GetDefaultFPS(); }
 
 	float GetScaledDeltaTime() const { return m_fpsController.GetScaledDeltaTime(); }
 

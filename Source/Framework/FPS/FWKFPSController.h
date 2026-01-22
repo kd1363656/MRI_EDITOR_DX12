@@ -22,8 +22,9 @@ namespace FWK
 		
 		float GetTimeScale() const { return m_timeScale;  }
 		
-		int GetMaxFPS() const { return m_maxFps; }
-		int GetNowFPS() const { return m_nowFps; }
+		int GetMaxFPS    () const { return m_maxFps;     }
+		int GetNowFPS    () const { return m_nowFps;     }
+		int GetDefaultFPS() const { return k_defaultFPS; }
 	
 		void SetTimeScale(const float a_set) { m_timeScale = a_set; }
 	

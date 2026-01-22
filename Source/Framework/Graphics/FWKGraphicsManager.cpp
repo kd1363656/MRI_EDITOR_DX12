@@ -56,6 +56,13 @@ bool FWK::Graphics::GraphicsManager::Init(const HWND a_hWND , const FWK::CommonS
 		return false;
 	}
 
+	// コマンドオブジェクトのリセット
+	if (!ResetCommandObjects())
+	{
+		assert(false && "コマンドのリセットに失敗しました。");
+		return false;
+	}
+
 	return true;
 }
 
@@ -63,17 +70,13 @@ void FWK::Graphics::GraphicsManager::BeginDraw()
 {
 	if (!m_commandAllocator || !m_commandList || !m_rtvDescriptorHeap || !m_swapChain) { return; }
 
-	// アロケーターとコマンドリストをクリア
-	m_commandAllocator->Reset();
-	m_commandList->Reset     (m_commandAllocator.Get() ,  nullptr);
-	
 	// 裏画面のバッファーのインデックスを取得
 	const UINT l_bbIDX = m_swapChain->GetCurrentBackBufferIndex();
 
 	// 現在のバックバッファーの"RTV"用の"CPU"ハンドルを取得
 	auto l_handle = m_rtvDescriptorHeap->GetRTVCPUHandle(l_bbIDX);
 
-	// "GPU"にリソースの状態の遷移を伝える
+	// "GPU"にリソースの状態の遷移を伝える"Present -> RenderTarget"
 	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get() , D3D12_RESOURCE_STATE_PRESENT , D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	// 第一引数 : 描画先レンダーターゲットの数(通常は"1")、第二引数 : 描画先レンダーターゲットのハンドルのポインタ、第三引数 : "true"で連続したディスクリプタヒープ内の範囲"false"で複数の非連続ハンドルを指定、第四引数 : デプスステンシルビュー
@@ -91,7 +94,8 @@ void FWK::Graphics::GraphicsManager::EndDraw()
 
 	// 裏画面のバッファーのインデックスを取得
 	const UINT l_bbIDX = m_swapChain->GetCurrentBackBufferIndex();
-	// "GPU"にリソースの状態の遷移を伝える
+
+	// "GPU"にリソースの状態の遷移を伝える"RenderTarget -> Present"
 	SetResourceBarrier(m_swapChainBuffers[l_bbIDX].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// 描画命令をすべて書き終えたら"Close"する、"Close"しないと描画の実行ができない
@@ -109,6 +113,9 @@ void FWK::Graphics::GraphicsManager::EndDraw()
 	// スクリーンフリップ処理
 	// 第一引数 : 同期間隔(60"FPS"想定)、第二引数 : オプションフラグ
 	m_swapChain->Present(k_defaultSyncInterval ,  0U);
+
+	// アロケーターとコマンドリストをクリア
+	ResetCommandObjects();
 }
 
 bool FWK::Graphics::GraphicsManager::CreateFactory()
@@ -393,6 +400,20 @@ void FWK::Graphics::GraphicsManager::WaitForSyncCommandQueue()
 		WaitForSingleObject          (m_fenceEvent , INFINITE);		 // イベント発生まで待ち続ける
 		CloseHandle                  (m_fenceEvent);				 // イベントハンドルを閉じる 
 	}
+}
+
+bool FWK::Graphics::GraphicsManager::ResetCommandObjects() const
+{
+	if (!m_commandAllocator || !m_commandList) 
+	{
+		return false;
+	}
+
+	// アロケーターとコマンドリストをクリア
+	m_commandAllocator->Reset();
+	m_commandList->Reset     (m_commandAllocator.Get() ,  nullptr);
+
+	return true;
 }
 
 #if defined (_DEBUG)

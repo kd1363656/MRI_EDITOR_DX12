@@ -43,11 +43,18 @@
 //===============================================
 // "DirectX12"
 //===============================================
+#pragma comment(lib , "d3d12.lib")
+#pragma comment(lib , "dxgi.lib")
+
 #include <d3d12.h>
 #include <dxgi1_6.h>
 
-#pragma comment(lib , "d3d12.lib")
-#pragma comment(lib , "dxgi.lib")
+//===============================================
+// "DirectX Tool Kit"
+//===============================================
+#pragma comment(lib , "DirectXTK12.lib")
+
+#include <SimpleMath.h>
 
 //===============================================
 // ŠO•”•Ö—˜ƒ‰ƒCƒuƒ‰ƒŠ
