@@ -3,6 +3,13 @@
 // ピクセルシェーダー、バーテックスシェーダーの読み込み
 void FWK::Graphics::Shader::Init()
 {
+	if (!m_rootSignature)
+	{
+		m_rootSignature = std::make_unique<FWK::Graphics::RootSignature>();
+	}
+
+	m_rootSignature->Init();
+
 	ID3DBlob* l_errorBlob = nullptr;
 
 	auto l_hr = D3DCompileFromFile(L"Asset/Data/Shader/Test/TestShader_VS.hlsl"    ,	// シェーダー名
@@ -88,5 +95,5 @@ void FWK::Graphics::Shader::Init()
 		m_psBlob
 	};
 
-	m_pipeline->Init(l_blobList);
+	m_pipeline->Init(l_blobList , m_rootSignature->GetWorkRootSignature());
 }

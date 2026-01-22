@@ -25,6 +25,9 @@
 // パイプライン
 #include "Graphics/Shader/Pipeline/FWKPipeline.h"
 
+// ルートシグネチャ
+#include "Graphics/Shader/RootSignature/FWKRootSignature.h"
+
 // "Shader"
 #include "Graphics/Shader/FWKShader.h"
 

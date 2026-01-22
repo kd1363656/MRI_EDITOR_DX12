@@ -79,6 +79,9 @@
     <Filter Include="Source\Framework\Graphics\Shader\Pipeline">
       <UniqueIdentifier>{045fbe2e-c0fb-4566-8bd9-a6280a416782}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Framework\Graphics\Shader\RootSignature">
+      <UniqueIdentifier>{ee9d3444-6fe2-49bd-99ac-9e36c266fbae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="Source\Framework\Graphics\Shader\Pipeline\FWKPipeline.h">
       <Filter>Source\Framework\Graphics\Shader\Pipeline</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Framework\Graphics\Shader\RootSignature\FWKRootSignature.h">
+      <Filter>Source\Framework\Graphics\Shader\RootSignature</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp">
@@ -160,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="Source\Framework\Graphics\Shader\Pipeline\FWKPipeline.cpp">
       <Filter>Source\Framework\Graphics\Shader\Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framework\Graphics\Shader\RootSignature\FWKRootSignature.cpp">
+      <Filter>Source\Framework\Graphics\Shader\RootSignature</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

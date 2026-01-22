@@ -1,7 +1,13 @@
 #include "FWKPipeline.h"
 
-void FWK::Graphics::Pipeline::Init(const std::vector<ComPtr<ID3DBlob>>& a_bufferList)
+void FWK::Graphics::Pipeline::Init(const std::vector<ComPtr<ID3DBlob>>& a_bufferList , const ComPtr<ID3D12RootSignature>& a_rootSignature)
 {
+	if (!a_rootSignature)
+	{
+		assert(false && "ルートシグネチャがまだ作成されていません。");
+		return;
+	}
+
 	// レイアウトの定義
 	D3D12_INPUT_ELEMENT_DESC l_inputLayout[] =
 	{
@@ -19,7 +25,7 @@ void FWK::Graphics::Pipeline::Init(const std::vector<ComPtr<ID3DBlob>>& a_buffer
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC l_desc = {};
 
 	// 後で設定
-	l_desc.pRootSignature = nullptr;
+	l_desc.pRootSignature = a_rootSignature.Get();
 
 	// シェーダーのセット
 	l_desc.VS.pShaderBytecode = a_bufferList[0]->GetBufferPointer();
