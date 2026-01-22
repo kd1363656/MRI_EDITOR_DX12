@@ -55,6 +55,24 @@
     <Filter Include="Source\Framework\Graphics\Mesh">
       <UniqueIdentifier>{b54575d9-e82f-4834-a505-b1c51b206841}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Asset">
+      <UniqueIdentifier>{51fb2855-c041-448a-971f-7f50f6160944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Asset\Data">
+      <UniqueIdentifier>{1097491a-4fed-493e-b406-ba28e25ac24a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Asset\Data\Setting">
+      <UniqueIdentifier>{a030a7eb-9d67-4fde-89c4-7416e3952100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Asset\Data\Setting\Window">
+      <UniqueIdentifier>{259f964f-420d-4888-8213-2e319cc3d613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Asset\Data\Shader">
+      <UniqueIdentifier>{0639801d-dee2-4056-a093-4605136e1ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Asset\Data\Shader\Test">
+      <UniqueIdentifier>{3d062281-3c34-46b5-bea4-e0deba6d6e04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -128,5 +146,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Asset\Data\Setting\Window\WindowConfig.json">
+      <Filter>Asset\Data\Setting\Window</Filter>
+    </None>
   </ItemGroup>
 </Project>
