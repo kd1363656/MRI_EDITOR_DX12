@@ -76,4 +76,17 @@ void FWK::Graphics::Shader::Init()
 		assert(false && "ピクセルシェーダーのファイル読み込みに失敗。");
 		return;
 	}
+
+	if (!m_pipeline)
+	{
+		m_pipeline = std::make_unique<FWK::Graphics::Pipeline>();
+	}
+
+	std::vector<ComPtr<ID3DBlob>> l_blobList =
+	{
+		m_vsBlob ,
+		m_psBlob
+	};
+
+	m_pipeline->Init(l_blobList);
 }

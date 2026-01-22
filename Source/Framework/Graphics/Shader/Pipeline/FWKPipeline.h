@@ -9,7 +9,7 @@ namespace FWK::Graphics
 		Pipeline () = default;
 		~Pipeline() = default;
 
-		void Init();
+		void Init(const std::vector<ComPtr<ID3DBlob>>& a_bufferList);
 
 	private:
 

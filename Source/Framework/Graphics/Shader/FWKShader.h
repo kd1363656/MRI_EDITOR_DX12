@@ -15,5 +15,7 @@ namespace FWK::Graphics
 
 		ComPtr<ID3DBlob> m_vsBlob = nullptr;
 		ComPtr<ID3DBlob> m_psBlob = nullptr;
+
+		std::unique_ptr<FWK::Graphics::Pipeline> m_pipeline = nullptr;
 	};
 }
