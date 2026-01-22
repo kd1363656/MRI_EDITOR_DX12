@@ -68,7 +68,7 @@ void FWK::Graphics::Pipeline::Init(const std::vector<ComPtr<ID3DBlob>>& a_buffer
 	l_desc.SampleDesc.Count   = 1;	// サンプリングは"1"ピクセルにつき"1"
 	l_desc.SampleDesc.Quality = 0;	// クオリティは最低
 
-	ID3D12PipelineState* l_pipelineState = nullptr;
+	ComPtr<ID3D12PipelineState> l_pipelineState = nullptr;
 
 	const auto& l_graphicsManager = FWK::Graphics::GraphicsManager::GetInstance();
 	auto		l_device		  = l_graphicsManager.GetDevice                ();

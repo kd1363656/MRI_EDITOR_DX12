@@ -10,7 +10,7 @@ void FWK::Graphics::Shader::Init()
 
 	m_rootSignature->Init();
 
-	ID3DBlob* l_errorBlob = nullptr;
+	ComPtr<ID3DBlob> l_errorBlob = nullptr;
 
 	auto l_hr = D3DCompileFromFile(L"Asset/Data/Shader/Test/TestShader_VS.hlsl"    ,	// シェーダー名
 								   nullptr                                         ,	// "define"はなし
