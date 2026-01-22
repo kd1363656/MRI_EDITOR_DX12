@@ -153,6 +153,7 @@
     <ClInclude Include="Source\Framework\Graphics\Descriptor\Heap\RTV\FWKRTVDescriptorHeap.h" />
     <ClInclude Include="Source\Framework\Graphics\FWKGraphicsManager.h" />
     <ClInclude Include="Source\Framework\Graphics\Mesh\FWKMesh.h" />
+    <ClInclude Include="Source\Framework\Graphics\Shader\FWKShader.h" />
     <ClInclude Include="Source\Framework\Singleton\FWKSingletonBase.h" />
     <ClInclude Include="Source\Framework\Utility\FileIO\FWKFileIOUtility.h" />
     <ClInclude Include="Source\Framework\Window\FWKWindow.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Source\Framework\Graphics\Descriptor\Heap\RTV\FWKRTVDescriptorHeap.cpp" />
     <ClCompile Include="Source\Framework\Graphics\FWKGraphicsManager.cpp" />
     <ClCompile Include="Source\Framework\Graphics\Mesh\FWKMesh.cpp" />
+    <ClCompile Include="Source\Framework\Graphics\Shader\FWKShader.cpp" />
     <ClCompile Include="Source\Framework\Window\FWKWindow.cpp" />
     <ClCompile Include="Source\PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

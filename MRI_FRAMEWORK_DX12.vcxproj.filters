@@ -73,6 +73,9 @@
     <Filter Include="Asset\Data\Shader\Test">
       <UniqueIdentifier>{3d062281-3c34-46b5-bea4-e0deba6d6e04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Framework\Graphics\Shader">
+      <UniqueIdentifier>{e1610a98-dc0e-4e09-a4d5-e2196a9a4c40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application\Application.h">
@@ -120,6 +123,9 @@
     <ClInclude Include="Source\Framework\Graphics\Mesh\FWKMesh.h">
       <Filter>Source\Framework\Graphics\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Framework\Graphics\Shader\FWKShader.h">
+      <Filter>Source\Framework\Graphics\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application\Application.cpp">
@@ -142,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="Source\Framework\Graphics\Mesh\FWKMesh.cpp">
       <Filter>Source\Framework\Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Framework\Graphics\Shader\FWKShader.cpp">
+      <Filter>Source\Framework\Graphics\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
